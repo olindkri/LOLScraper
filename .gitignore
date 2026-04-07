@@ -15,6 +15,10 @@ env/
 # OS
 .DS_Store
 
+# Node
+node_modules/
+frontend/dist/
+
 # IDE
 .idea/
 .vscode/
