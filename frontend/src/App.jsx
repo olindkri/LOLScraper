@@ -81,7 +81,7 @@ export default function App() {
             </svg>
           </div>
           <span style={{ fontFamily: 'var(--font-head)', fontSize: '1rem', letterSpacing: '0.05em', color: 'var(--fg)' }}>
-            GROUP TRACKER
+            BABY COW
           </span>
         </div>
 

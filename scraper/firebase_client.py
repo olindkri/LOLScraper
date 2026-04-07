@@ -20,6 +20,7 @@ def build_payload(players: list[dict], group: dict) -> dict:
     for p in players:
         players_data[p["id"]] = {
             "displayName": p["displayName"],
+            "gamertag": p["gamertag"],
             "profileUrl": p["url"],
             "games": p["games"],
             "stats": p["stats"],

@@ -18,12 +18,28 @@ function GameDot({ result }) {
   );
 }
 
+// Fallback map until next scraper run populates gamertag in Firebase
+const GAMERTAGS = {
+  oliver:   'Hopa#Hopa',
+  eirik:    'ErikBby69#EUW',
+  marcus:   'Easy Geometry#EUW',
+  minh:     'KingOfTheWolvez#EUW',
+  jon:      'Markemouse#Monke',
+  daniel:   'MczExperttt#EUW',
+  nontagan: 'MrHipsterYip#EUW',
+  tim:      'Pamit#EUW',
+  sigurd:   'Pog0p#EUW',
+  simon:    'sXBLACKPHANTOMXs#2003',
+  fredrik:  'XxVortexSpeedxX#3845',
+};
+
 export default function ScoreboardRow({ rank, player, isEven }) {
   const [expanded, setExpanded] = useState(false);
-  const { displayName, games = [], stats = {} } = player;
+  const { id, displayName, gamertag, games = [], stats = {} } = player;
   const { wins = 0, losses = 0, winRate = 0, avgKda = 0, avgCs = 0, mostPlayedChampion = '' } = stats;
   const pct = Math.round(winRate * 100);
   const isWinning = pct >= 50;
+  const tag = gamertag || GAMERTAGS[id] || null;
   const rankColor = RANK_COLORS[rank - 1] ?? 'var(--fg-dim)';
   const totalGames = wins + losses;
 
@@ -63,14 +79,28 @@ export default function ScoreboardRow({ rank, player, isEven }) {
         {/* Name */}
         <td style={{ padding: '14px 12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{
-              fontFamily: 'var(--font-head)',
-              fontSize: '0.85rem',
-              color: 'var(--fg)',
-              letterSpacing: '0.02em',
-            }}>
-              {displayName}
-            </span>
+            <div>
+              <div style={{
+                fontFamily: 'var(--font-head)',
+                fontSize: '0.85rem',
+                color: 'var(--fg)',
+                letterSpacing: '0.02em',
+                lineHeight: 1.2,
+              }}>
+                {displayName}
+              </div>
+              {tag && (
+                <div style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.65rem',
+                  color: 'var(--fg-dim)',
+                  letterSpacing: '0.02em',
+                  marginTop: '1px',
+                }}>
+                  {tag}
+                </div>
+              )}
+            </div>
             {expanded && (
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--fg-dim)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                 <polyline points="18 15 12 9 6 15" />
