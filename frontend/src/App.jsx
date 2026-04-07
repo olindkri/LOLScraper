@@ -16,18 +16,32 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-gray-400 text-lg animate-pulse">Loading stats...</div>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--color-bg)' }}
+      >
+        <span
+          className="text-lg animate-pulse"
+          style={{ color: 'var(--color-fg-muted)', fontFamily: 'var(--font-mono)' }}
+        >
+          Loading stats...
+        </span>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-fg)' }}>
       {/* Header */}
-      <header className="border-b border-gray-700 px-6 py-4">
-        <h1 className="text-xl font-bold tracking-tight">
-          <span className="text-yellow-400">LOL</span> Group Tracker
+      <header
+        className="px-6 py-4"
+        style={{ borderBottom: '1px solid var(--color-border)' }}
+      >
+        <h1
+          className="text-lg font-black tracking-widest uppercase"
+          style={{ fontFamily: 'var(--font-display)', color: 'var(--color-fg)' }}
+        >
+          <span style={{ color: 'var(--color-accent)' }}>LOL</span> Group Tracker
         </h1>
       </header>
 
@@ -41,7 +55,14 @@ export default function App() {
       <Leaderboard players={players} />
 
       {/* Footer */}
-      <footer className="border-t border-gray-700 px-6 py-4 text-center text-gray-500 text-sm">
+      <footer
+        className="px-6 py-4 text-center text-xs"
+        style={{
+          borderTop: '1px solid var(--color-border)',
+          color: 'var(--color-fg-muted)',
+          fontFamily: 'var(--font-mono)',
+        }}
+      >
         Last updated: {timeAgo(group?.lastUpdated)} · Data from leagueofgraphs.com · Updates every 30 min
       </footer>
     </div>
