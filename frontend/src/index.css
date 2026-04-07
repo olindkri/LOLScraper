@@ -1,3 +1,41 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --bg:          #0f0f23;
+  --surface:     #141428;
+  --card:        #1a1835;
+  --card-hover:  #201e3d;
+  --border:      #252348;
+  --border-hi:   #342f6e;
+  --fg:          #e2e8f0;
+  --fg-muted:    #8b92b0;
+  --fg-dim:      #454a6b;
+  --accent:      #7c3aed;
+  --accent-soft: #7c3aed25;
+  --win:         #10b981;
+  --win-soft:    #10b98120;
+  --loss:        #f43f5e;
+  --loss-soft:   #f43f5e20;
+  --gold:        #f59e0b;
+  --font-head:   'Russo One', sans-serif;
+  --font-data:   'Chakra Petch', sans-serif;
+  --font-mono:   'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-data);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
