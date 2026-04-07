@@ -19,10 +19,10 @@ def test_returns_at_most_10_games():
     assert len(games) <= 10
 
 
-def test_only_ranked_solo_duo():
+def test_only_ranked_queues():
     games = parse_games(get_soup())
     for game in games:
-        assert game["queue"] == "Ranked Solo/Duo"
+        assert game["queue"] in ("Ranked Solo/Duo", "Ranked Flex")
 
 
 def test_game_has_required_fields():

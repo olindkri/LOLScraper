@@ -12,7 +12,7 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 }
 
-RANKED_SOLO_DUO = "Ranked Solo/Duo"
+RANKED_QUEUES = {"Ranked Solo/Duo", "Ranked Flex"}
 
 
 def fetch_page(url: str) -> BeautifulSoup:
@@ -23,7 +23,7 @@ def fetch_page(url: str) -> BeautifulSoup:
 
 def parse_games(soup: BeautifulSoup) -> list[dict]:
     """
-    Parse up to 10 Ranked Solo/Duo games from a leagueofgraphs summoner page.
+    Parse up to 10 ranked games (Solo/Duo + Flex) from a leagueofgraphs summoner page.
 
     Returns a list of dicts with keys:
         champion, result, kills, deaths, assists, cs, duration, queue
@@ -39,13 +39,13 @@ def parse_games(soup: BeautifulSoup) -> list[dict]:
         if "recentGamesTableHeader" in classes or "filtersBlock" in classes:
             continue
 
-        # Queue type — only keep Ranked Solo/Duo
+        # Queue type — keep Solo/Duo and Flex
         dark_td = row.find("td", class_="resultCellDark")
         if not dark_td:
             continue
         mode_el = dark_td.find("div", class_="gameMode")
         queue = mode_el.get("tooltip", "").strip() if mode_el else ""
-        if queue != RANKED_SOLO_DUO:
+        if queue not in RANKED_QUEUES:
             continue
 
         # Result
@@ -88,7 +88,7 @@ def parse_games(soup: BeautifulSoup) -> list[dict]:
             "assists": assists,
             "cs": cs,
             "duration": duration,
-            "queue": RANKED_SOLO_DUO,
+            "queue": queue,
         })
 
         if len(games) == 10:

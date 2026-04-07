@@ -5,6 +5,7 @@ SAMPLE_PLAYERS = [
     {
         "id": "oliver",
         "displayName": "Oliver",
+        "gamertag": "Hopa#Hopa",
         "url": "https://www.leagueofgraphs.com/summoner/euw/Hopa-Hopa",
         "games": [{"champion": "Jinx", "result": "win", "kills": 8, "deaths": 2, "assists": 10, "cs": 200, "duration": "32:14", "queue": "Ranked Solo/Duo"}],
         "stats": {"wins": 1, "losses": 0, "winRate": 1.0, "avgKda": 9.0, "avgCs": 200, "mostPlayedChampion": "Jinx"},
