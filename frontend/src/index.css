@@ -49,8 +49,6 @@ body {
 /* Default: hide mobile-only rank label */
 .rank-label-mobile { display: none; }
 
-/* Default: hide mobile-only modal close footer */
-.modal-close-footer { display: none; }
 
 @media (max-width: 640px) {
   /* Hide non-essential scoreboard columns */
@@ -100,10 +98,6 @@ body {
   /* Match modal — single column, reduced padding */
   .modal-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
   .modal-body { padding: 12px !important; }
-
-  /* Move close button to bottom on mobile */
-  .modal-close-header { display: none !important; }
-  .modal-close-footer { display: block; padding: 12px; border-top: 1px solid var(--border); }
 
   /* 15% top/bottom margin so iOS Safari taskbars don't overlap */
   .modal-overlay { padding: 15vh 16px !important; align-items: flex-start !important; }
