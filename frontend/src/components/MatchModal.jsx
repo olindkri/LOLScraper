@@ -32,8 +32,8 @@ export default function MatchModal({ matchId, onClose }) {
 
   if (!matchId) return null;
 
-  const team1 = match?.participants.filter(p => p.team === 1) ?? [];
-  const team2 = match?.participants.filter(p => p.team === 2) ?? [];
+  const team1 = (match?.participants ?? []).filter(p => p.team === 1);
+  const team2 = (match?.participants ?? []).filter(p => p.team === 2);
   const totalKills = match ? match.team1Kills + match.team2Kills : 0;
 
   return (
@@ -185,8 +185,8 @@ function TeamColumn({ title, players, teamKills, totalKills, won }) {
       </div>
 
       {/* Player cards */}
-      {players.map((p, i) => (
-        <ParticipantRow key={i} participant={p} teamKills={teamKills} teamColor={color} />
+      {players.map((p) => (
+        <ParticipantRow key={p.summonerName} participant={p} teamKills={teamKills} teamColor={color} />
       ))}
     </div>
   );
