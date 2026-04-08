@@ -60,7 +60,7 @@ export default function App() {
     <div style={{ minHeight: '100dvh', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
 
       {/* ── Header ── */}
-      <header style={{
+      <header className="app-header" style={{
         background: 'var(--surface)',
         borderBottom: '1px solid var(--border)',
         padding: '0 24px',
@@ -118,7 +118,7 @@ export default function App() {
           </div>
         </div>
 
-        <div style={{ paddingLeft: '16px', paddingTop: '8px', paddingBottom: '8px' }}>
+        <div className="header-record" style={{ paddingLeft: '16px', paddingTop: '8px', paddingBottom: '8px' }}>
           <RecordBanner records={records} />
         </div>
 
@@ -132,7 +132,7 @@ export default function App() {
 
       {/* ── Scoreboard ── */}
       <main style={{ flex: 1, overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '640px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{
               background: 'var(--surface)',
@@ -147,9 +147,9 @@ export default function App() {
               <th style={{ padding: '10px 12px', textAlign: 'left' }}>Player</th>
               <th style={{ padding: '10px 12px', textAlign: 'left', width: '160px' }}>Win Rate</th>
               <th style={{ padding: '10px 12px', textAlign: 'left' }}>Last 15 Games</th>
-              <th style={{ padding: '10px 12px', textAlign: 'left', width: '60px' }}>KDA</th>
-              <th style={{ padding: '10px 12px', textAlign: 'left', width: '60px' }}>CS</th>
-              <th style={{ padding: '10px 20px 10px 12px', textAlign: 'left' }}>Top Champ</th>
+              <th className="col-kda" style={{ padding: '10px 12px', textAlign: 'left', width: '60px' }}>KDA</th>
+              <th className="col-cs" style={{ padding: '10px 12px', textAlign: 'left', width: '60px' }}>CS</th>
+              <th className="col-champ" style={{ padding: '10px 20px 10px 12px', textAlign: 'left' }}>Top Champ</th>
             </tr>
           </thead>
           <tbody>
