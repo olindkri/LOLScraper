@@ -24,6 +24,7 @@ def build_payload(players: list[dict], group: dict) -> dict:
             "profileUrl": p["url"],
             "games": p["games"],
             "stats": p["stats"],
+            "soloRank": p.get("soloRank"),
         }
     return {"players": players_data, "group": group}
 

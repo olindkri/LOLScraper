@@ -9,6 +9,7 @@ SAMPLE_PLAYERS = [
         "url": "https://www.leagueofgraphs.com/summoner/euw/Hopa-Hopa",
         "games": [{"champion": "Jinx", "result": "win", "kills": 8, "deaths": 2, "assists": 10, "cs": 200, "duration": "32:14", "queue": "Ranked Solo/Duo"}],
         "stats": {"wins": 1, "losses": 0, "winRate": 1.0, "avgKda": 9.0, "avgCs": 200, "mostPlayedChampion": "Jinx"},
+        "soloRank": {"tier": "gold", "division": "II", "lp": 67},
     }
 ]
 
@@ -100,3 +101,16 @@ def test_write_match_calls_set_at_correct_path(mocker):
     write_match(match_data, "https://fake.firebaseio.com")
     mock_db_ref.assert_called_with("/matches/7813808785")
     mock_ref.set.assert_called_once_with(match_data)
+
+
+def test_build_payload_includes_solo_rank():
+    payload = build_payload(SAMPLE_PLAYERS, SAMPLE_GROUP)
+    oliver = payload["players"]["oliver"]
+    assert "soloRank" in oliver
+    assert oliver["soloRank"] == {"tier": "gold", "division": "II", "lp": 67}
+
+
+def test_build_payload_solo_rank_none_when_unranked():
+    unranked_players = [{**SAMPLE_PLAYERS[0], "soloRank": None}]
+    payload = build_payload(unranked_players, SAMPLE_GROUP)
+    assert payload["players"]["oliver"]["soloRank"] is None
