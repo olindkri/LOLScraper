@@ -156,7 +156,7 @@ export default function App() {
             {sorted.length === 0 ? (
               <tr>
                 <td colSpan={7} style={{ padding: '48px', textAlign: 'center', color: 'var(--fg-dim)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
-                  No data yet — scraper runs every 30 minutes
+                  No data yet — scraper runs every 20 minutes
                 </td>
               </tr>
             ) : (
@@ -188,7 +188,7 @@ export default function App() {
         gap: '4px',
       }}>
         <span>Solo/Duo + Flex · last 30 ranked games per player · data from leagueofgraphs.com</span>
-        <span>auto-refresh every 30 min</span>
+        <span>auto-refresh every 20 min</span>
       </footer>
 
       <MatchModal

@@ -92,11 +92,11 @@ This triggers:
 
 ## 7. Trigger first scrape
 
-In GitHub → **Actions** → **Scrape LoL Stats** → **Run workflow**
+In GitHub → **Actions** → **Scrape LOL Stats** → **Run workflow**
 
 The scraper will populate the database and the frontend will show real data.
 
-After that, it runs automatically every 30 minutes.
+After that, it runs automatically every 20 minutes.
 
 ---
 

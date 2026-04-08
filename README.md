@@ -1,6 +1,6 @@
 # 🐄 Baby Cow — LoL Group Tracker
 
-A live dashboard that tracks ranked League of Legends game history for a group of friends. Shows the combined group win rate, individual stats, and a sortable scoreboard updated every 30 minutes.
+A live dashboard that tracks ranked League of Legends game history for a group of friends. Shows the combined group win rate, individual stats, and a sortable scoreboard updated every 20 minutes.
 
 **Live site:** https://lol-group-tracker.web.app
 
@@ -11,14 +11,14 @@ A live dashboard that tracks ranked League of Legends game history for a group o
 - Scrapes ranked Solo/Duo and Flex game history for 11 players from [leagueofgraphs.com](https://www.leagueofgraphs.com)
 - Stores stats in Firebase Realtime Database
 - Displays a live scoreboard ranked by win rate, with last 10 games, KDA, CS, and top champion per player
-- Automatically re-scrapes every 30 minutes via GitHub Actions
+- Automatically re-scrapes every 20 minutes via GitHub Actions
 
 ---
 
 ## Architecture
 
 ```
-GitHub Actions (cron every 30 min)
+GitHub Actions (cron every 20 min)
     └── scraper/main.py
             ├── fetches leagueofgraphs.com pages
             ├── parses Ranked Solo/Duo + Flex games
@@ -104,7 +104,7 @@ GitHub Actions (cron every 30 min)
 │   └── package.json
 │
 ├── .github/workflows/
-│   ├── scrape.yml    # Cron every 30 min + manual trigger
+│   ├── scraper.yml   # Cron every 20 min + manual trigger
 │   └── deploy.yml    # Deploy frontend on push to main (frontend/** changes)
 │
 ├── firebase.json     # Firebase Hosting config
@@ -116,8 +116,8 @@ GitHub Actions (cron every 30 min)
 
 ## GitHub Actions workflows
 
-### `scrape.yml` — Scrape LoL Stats
-- **Trigger:** every 30 minutes (`*/30 * * * *`) + manual `workflow_dispatch`
+### `scraper.yml` — Scrape LOL Stats
+- **Trigger:** every 20 minutes (`*/20 * * * *`) + manual `workflow_dispatch`
 - **What it does:** runs `scraper/main.py` which scrapes all 11 players and writes to Firebase
 - **Secrets needed:** `FIREBASE_CREDENTIALS`, `FIREBASE_DATABASE_URL`
 
@@ -126,7 +126,7 @@ GitHub Actions (cron every 30 min)
 - **What it does:** `npm run build` then deploys to Firebase Hosting
 - **Secrets needed:** all `VITE_FIREBASE_*` vars + `FIREBASE_SERVICE_ACCOUNT`
 
-To trigger a manual scrape: **GitHub → Actions → Scrape LoL Stats → Run workflow**
+To trigger a manual scrape: **GitHub → Actions → Scrape LOL Stats → Run workflow**
 
 ---
 

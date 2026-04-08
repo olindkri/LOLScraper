@@ -193,17 +193,19 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                 <tbody>
                   {games.map((g, i) => {
                     const clickable = !!g.matchId && !!onGameClick;
+                    const baseRowColor = i % 2 === 0 ? 'transparent' : 'var(--surface)';
                     return (
                       <tr
                         key={i}
                         onClick={clickable ? () => onGameClick(g.matchId) : undefined}
                         style={{
                           borderTop: '1px solid var(--border)',
-                          backgroundColor: i % 2 === 0 ? 'transparent' : 'var(--surface)',
+                          backgroundColor: baseRowColor,
                           cursor: clickable ? 'pointer' : 'default',
+                          transition: 'background-color 150ms ease',
                         }}
-                        onMouseEnter={clickable ? e => { e.currentTarget.style.backgroundColor = 'var(--card-hover)'; } : undefined}
-                        onMouseLeave={clickable ? e => { e.currentTarget.style.backgroundColor = i % 2 === 0 ? 'transparent' : 'var(--surface)'; } : undefined}
+                        onMouseEnter={clickable ? e => { e.currentTarget.style.backgroundColor = 'var(--table-row-hover)'; } : undefined}
+                        onMouseLeave={clickable ? e => { e.currentTarget.style.backgroundColor = baseRowColor; } : undefined}
                       >
                         <td style={{ padding: '8px 12px 8px 24px' }}>
                           <span style={{
