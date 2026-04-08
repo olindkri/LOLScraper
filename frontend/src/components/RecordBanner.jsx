@@ -49,8 +49,8 @@ function RecordCard({ icon, iconColor, glowColor, label, value, suffix, name, ar
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
-        backgroundColor: 'var(--card)',
-        border: '1px solid var(--border-hi)',
+        backgroundColor: `color-mix(in srgb, ${glowColor} 8%, var(--card))`,
+        border: `1px solid ${glowColor}50`,
         borderRadius: '6px',
         padding: '8px 12px',
         minWidth: '160px',
@@ -65,8 +65,8 @@ function RecordCard({ icon, iconColor, glowColor, label, value, suffix, name, ar
           width: '36px',
           height: '36px',
           borderRadius: '6px',
-          backgroundColor: `${glowColor}18`,
-          boxShadow: `0 0 10px ${glowColor}40`,
+          backgroundColor: `${glowColor}40`,
+          boxShadow: `0 0 12px ${glowColor}60`,
           flexShrink: 0,
         }}
       >
@@ -80,7 +80,7 @@ function RecordCard({ icon, iconColor, glowColor, label, value, suffix, name, ar
           style={{
             fontFamily: 'var(--font-data)',
             fontSize: '0.6rem',
-            color: 'var(--fg-dim)',
+            color: 'var(--fg)',
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
             lineHeight: 1,
@@ -88,13 +88,27 @@ function RecordCard({ icon, iconColor, glowColor, label, value, suffix, name, ar
         >
           {label}
         </span>
+        
+        {/* Name */}
+        <span
+          style={{
+            fontFamily: 'var(--font-head)',
+            fontSize: '0.8rem',
+            color: 'var(--fg)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {name}
+        </span>
 
         {/* Value row */}
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', lineHeight: 1.1 }}>
           <span
             style={{
               fontFamily: 'var(--font-head)',
-              fontSize: '1.3rem',
+              fontSize: '0.7rem',
               color: 'var(--fg)',
               lineHeight: 1,
             }}
@@ -115,19 +129,6 @@ function RecordCard({ icon, iconColor, glowColor, label, value, suffix, name, ar
           )}
         </div>
 
-        {/* Name */}
-        <span
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.65rem',
-            color: 'var(--fg-dim)',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {name}
-        </span>
       </div>
     </div>
   );
