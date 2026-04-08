@@ -74,7 +74,7 @@ function RecordCard({ icon, iconColor, glowColor, label, value, suffix, name, ar
       </div>
 
       {/* Text stack */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', minWidth: 0 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: 0 }}>
         {/* Label */}
         <span
           style={{
