@@ -1,6 +1,6 @@
 from pathlib import Path
 from bs4 import BeautifulSoup
-from scrape import parse_games, _parse_solo_rank
+from scrape import parse_games, _parse_solo_rank, _parse_mastery
 
 FIXTURE = Path(__file__).parent / "fixtures" / "sample_page.html"
 
@@ -161,3 +161,51 @@ def test_parse_solo_rank_ignores_nested_lp_text_inside_league_tier():
     soup = BeautifulSoup(html, "lxml")
     rank = _parse_solo_rank(soup)
     assert rank == {"tier": "diamond", "division": "IV", "lp": 0}
+
+
+def _mastery_html(*entries):
+    """Build minimal HTML with mastery tooltip divs. entries = [(champion, level, points_str)]"""
+    rows = []
+    for champ, level, pts in entries:
+        rows.append(f"""
+        <div class="relative requireTooltip"
+             tooltip="&lt;itemname&gt;Mastery Level {level}&lt;/itemname&gt;&lt;br/&gt;Points: {pts}">
+          <a href="/foo"><img alt="{champ}" title="{champ}"/></a>
+        </div>
+        """)
+    return BeautifulSoup("".join(rows), "lxml")
+
+
+def test_parse_mastery_returns_dict():
+    soup = _mastery_html(("Twitch", 44, "562,779"))
+    result = _parse_mastery(soup)
+    assert isinstance(result, dict)
+
+
+def test_parse_mastery_extracts_champion_and_points():
+    soup = _mastery_html(("Twitch", 44, "562,779"))
+    result = _parse_mastery(soup)
+    assert result == {"Twitch": 562779}
+
+
+def test_parse_mastery_multiple_champions():
+    soup = _mastery_html(("Twitch", 44, "562,779"), ("Kayn", 24, "269,203"))
+    result = _parse_mastery(soup)
+    assert result == {"Twitch": 562779, "Kayn": 269203}
+
+
+def test_parse_mastery_empty_page_returns_empty_dict():
+    soup = BeautifulSoup("<html></html>", "lxml")
+    result = _parse_mastery(soup)
+    assert result == {}
+
+
+def test_parse_mastery_skips_divs_without_mastery_tooltip():
+    html = """
+    <div class="relative requireTooltip" tooltip="some other tooltip">
+      <a href="/foo"><img alt="Twitch" title="Twitch"/></a>
+    </div>
+    """
+    soup = BeautifulSoup(html, "lxml")
+    result = _parse_mastery(soup)
+    assert result == {}

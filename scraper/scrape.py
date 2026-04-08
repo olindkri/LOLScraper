@@ -191,3 +191,30 @@ def _parse_solo_rank(soup: BeautifulSoup) -> dict | None:
         return {"tier": tier, "division": division, "lp": lp}
 
     return None
+
+
+def _parse_mastery(soup: BeautifulSoup) -> dict:
+    """Parse champion mastery points from the summoner page.
+
+    Returns {champion_name: points_int} for all champions with a mastery
+    tooltip on the page. Returns {} if none are found.
+    """
+    result = {}
+    for div in soup.find_all("div", class_="requireTooltip"):
+        tooltip = div.get("tooltip", "")
+        if "Mastery Level" not in tooltip:
+            continue
+        pts_match = re.search(r"Points: ([\d,]+)", tooltip)
+        if not pts_match:
+            continue
+        link = div.find("a")
+        if not link:
+            continue
+        champ_img = link.find("img")
+        if not champ_img:
+            continue
+        champ_name = champ_img.get("alt", "").strip()
+        if not champ_name:
+            continue
+        result[champ_name] = int(pts_match.group(1).replace(",", ""))
+    return result
