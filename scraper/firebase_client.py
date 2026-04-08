@@ -32,3 +32,14 @@ def write_to_firebase(players: list[dict], group: dict, database_url: str) -> No
     _init_app(database_url)
     payload = build_payload(players, group)
     db.reference("/").update(payload)
+
+
+def read_records(database_url: str) -> dict:
+    _init_app(database_url)
+    data = db.reference("/records").get()
+    return data if data is not None else {}
+
+
+def write_records(records: dict, database_url: str) -> None:
+    _init_app(database_url)
+    db.reference("/records").set(records)

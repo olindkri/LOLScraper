@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock
-from firebase_client import build_payload, write_to_firebase
+from firebase_client import build_payload, write_to_firebase, read_records, write_records
 
 SAMPLE_PLAYERS = [
     {
@@ -39,3 +39,32 @@ def test_write_to_firebase_calls_update(mocker):
     call_args = mock_ref.update.call_args[0][0]
     assert "players" in call_args
     assert "group" in call_args
+
+
+def test_read_records_returns_dict(mocker):
+    mock_ref = MagicMock()
+    mock_ref.get.return_value = {"bestWinStreak": {"value": 5}, "bestKda": {"value": 3.2}}
+    mocker.patch("firebase_client._init_app")
+    mock_db_ref = mocker.patch("firebase_client.db.reference", return_value=mock_ref)
+    result = read_records("https://fake.firebaseio.com")
+    assert result == {"bestWinStreak": {"value": 5}, "bestKda": {"value": 3.2}}
+    mock_db_ref.assert_called_with("/records")
+
+
+def test_read_records_returns_empty_when_none(mocker):
+    mock_ref = MagicMock()
+    mock_ref.get.return_value = None
+    mocker.patch("firebase_client._init_app")
+    mocker.patch("firebase_client.db.reference", return_value=mock_ref)
+    result = read_records("https://fake.firebaseio.com")
+    assert result == {}
+
+
+def test_write_records_calls_set(mocker):
+    mock_ref = MagicMock()
+    mocker.patch("firebase_client._init_app")
+    mock_db_ref = mocker.patch("firebase_client.db.reference", return_value=mock_ref)
+    records = {"bestWinStreak": {"playerId": "oliver", "value": 8}}
+    write_records(records, "https://fake.firebaseio.com")
+    mock_db_ref.assert_called_with("/records")
+    mock_ref.set.assert_called_once_with(records)
