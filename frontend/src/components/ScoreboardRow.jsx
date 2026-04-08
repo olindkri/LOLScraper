@@ -36,7 +36,7 @@ const GAMERTAGS = {
 
 export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
   const [expanded, setExpanded] = useState(false);
-  const { id, displayName, gamertag, games = [], stats = {} } = player;
+  const { id, displayName, gamertag, games = [], stats = {}, soloRank = null } = player;
   const { wins = 0, losses = 0, winRate = 0, avgKda = 0, avgCs = 0, mostPlayedChampion = '' } = stats;
   const pct = Math.round(winRate * 100);
   const isWinning = pct >= 50;
@@ -80,6 +80,34 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
         {/* Name */}
         <td style={{ padding: '14px 12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {soloRank && (() => {
+              const RANK_COLORS_TEXT = {
+                iron:        '#6C5849',
+                bronze:      '#A96433',
+                silver:      '#7B9AA1',
+                gold:        '#C8981E',
+                platinum:    '#4C9E91',
+                emerald:     '#2EAA4B',
+                diamond:     '#576BCE',
+                master:      '#9B3FE8',
+                grandmaster: '#D44242',
+                challenger:  '#F5C94B',
+              };
+              const TIER_LABELS = { grandmaster: 'GRAND MASTER' };
+              const color = RANK_COLORS_TEXT[soloRank.tier] ?? 'var(--fg-dim)';
+              const tierLabel = TIER_LABELS[soloRank.tier] ?? soloRank.tier.toUpperCase();
+              const subLabel = soloRank.division ? `${soloRank.division} — ${soloRank.lp} LP` : `${soloRank.lp} LP`;
+              return (
+                <div style={{ textAlign: 'right', lineHeight: 1.2, flexShrink: 0 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', fontWeight: 700, color, letterSpacing: '0.06em' }}>
+                    {tierLabel}
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color, opacity: 0.75, letterSpacing: '0.03em' }}>
+                    {subLabel}
+                  </div>
+                </div>
+              );
+            })()}
             <div>
               <div style={{
                 fontFamily: 'var(--font-head)',
