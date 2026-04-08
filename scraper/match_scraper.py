@@ -58,11 +58,11 @@ def _parse_match_soup(match_id: str, soup: BeautifulSoup) -> dict:
                 m = re.search(r"(\d+)\s*CS", cs_div.get_text())
                 cs = int(m.group(1)) if m else 0
 
-            vision_score = 0
+            vision_score = None
             vs_div = kda_td.find("div", class_="visionScore")
             if vs_div:
                 m = re.search(r"(\d+)", vs_div.get_text())
-                vision_score = int(m.group(1)) if m else 0
+                vision_score = int(m.group(1)) if m else None
 
             score = min(10.0, round((kills * 2 + assists) / max(deaths, 1) + cs / 100, 1))
 

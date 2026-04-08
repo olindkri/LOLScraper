@@ -186,7 +186,7 @@ function TeamColumn({ title, players, teamKills, totalKills, won }) {
 
       {/* Player cards */}
       {players.map((p) => (
-        <ParticipantRow key={p.summonerName} participant={p} teamKills={teamKills} teamColor={color} />
+        <ParticipantRow key={`${p.team}-${p.summonerName}`} participant={p} teamKills={teamKills} teamColor={color} />
       ))}
     </div>
   );

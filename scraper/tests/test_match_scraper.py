@@ -125,3 +125,20 @@ def test_team2_won_is_false_for_team1():
     soup = BeautifulSoup(html, "lxml")
     result = _parse_match_soup("88888", soup)
     assert result["team1Won"] is False
+
+
+def test_vision_score_none_when_absent():
+    html = """
+    <html><body><table class="matchTable">
+    <tbody>
+    <tr class="playerRow">
+      <td class="summoner_column"><img alt="Aatrox"/><div class="name">A#1</div></td>
+      <td class="kdaColumn"><div class="kda"><span class="kills">1</span>/<span class="deaths">1</span>/<span class="assists">1</span></div><div class="cs">50 CS</div></td>
+      <td class="kdaColumn"><div class="kda"><span class="kills">1</span>/<span class="deaths">1</span>/<span class="assists">1</span></div><div class="cs">50 CS</div></td>
+      <td class="summoner_column"><img alt="Ahri"/><div class="name">B#2</div></td>
+    </tr>
+    </tbody></table></body></html>
+    """
+    soup = BeautifulSoup(html, "lxml")
+    result = _parse_match_soup("77777", soup)
+    assert result["participants"][0]["visionScore"] is None
