@@ -215,6 +215,11 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                           }}>
                             <span style={{ width: '7px', height: '7px', borderRadius: '1px', backgroundColor: g.result === 'win' ? 'var(--win)' : 'var(--loss)', display: 'inline-block', flexShrink: 0 }} />
                             {g.result === 'win' ? 'WIN' : 'LOSS'}
+                            {g.lpDelta != null && (
+                              <span style={{ fontWeight: 700 }}>
+                                {g.lpDelta > 0 ? `+${g.lpDelta}` : g.lpDelta}
+                              </span>
+                            )}
                           </span>
                         </td>
                         <td style={{ padding: '8px 12px', color: 'var(--fg)' }}>{g.champion || '—'}</td>
