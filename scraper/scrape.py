@@ -168,7 +168,7 @@ def _parse_solo_rank(soup: BeautifulSoup) -> dict | None:
         tier_text = tier_el.get_text(strip=True)  # e.g. "Emerald IV" or "Master"
 
         lp_el = block.find(class_="leaguePoints")
-        lp = int(lp_el.get_text(strip=True)) if lp_el else 0
+        lp = _to_int(lp_el.get_text(strip=True)) if lp_el else 0
 
         parts = tier_text.split()
         tier = parts[0].lower()           # "emerald", "master", etc.

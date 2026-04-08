@@ -1,6 +1,6 @@
 from pathlib import Path
 from bs4 import BeautifulSoup
-from scrape import parse_games
+from scrape import parse_games, _parse_solo_rank
 
 FIXTURE = Path(__file__).parent / "fixtures" / "sample_page.html"
 
@@ -82,10 +82,6 @@ def test_lp_delta_none_when_absent():
     assert games[0]["lpDelta"] is None
 
 
-from bs4 import BeautifulSoup as _BS
-from scrape import _parse_solo_rank
-
-
 def test_parse_solo_rank_returns_tier_division_lp():
     rank = _parse_solo_rank(get_soup())
     assert rank is not None
@@ -95,7 +91,7 @@ def test_parse_solo_rank_returns_tier_division_lp():
 
 
 def test_parse_solo_rank_unranked_returns_none():
-    soup = _BS("<html></html>", "lxml")
+    soup = BeautifulSoup("<html></html>", "lxml")
     assert _parse_solo_rank(soup) is None
 
 
@@ -109,7 +105,7 @@ def test_parse_solo_rank_apex_tier_no_division():
       </div>
     </div>
     """
-    soup = _BS(html, "lxml")
+    soup = BeautifulSoup(html, "lxml")
     rank = _parse_solo_rank(soup)
     assert rank == {"tier": "master", "division": None, "lp": 1234}
 
@@ -124,5 +120,27 @@ def test_parse_solo_rank_ignores_flex():
       </div>
     </div>
     """
-    soup = _BS(html, "lxml")
+    soup = BeautifulSoup(html, "lxml")
     assert _parse_solo_rank(soup) is None
+
+
+def test_parse_solo_rank_picks_solo_when_flex_appears_first():
+    html = """
+    <div class="best-league">
+      <div class="best-league__inner">
+        <div class="leagueTier">Gold II</div>
+        <div class="queueLine"><span class="queue">Flex 5v5</span></div>
+        <div class="league-points">LP: <span class="leaguePoints">50</span></div>
+      </div>
+    </div>
+    <div class="best-league">
+      <div class="best-league__inner">
+        <div class="leagueTier">Silver I</div>
+        <div class="queueLine"><span class="queue">Soloqueue</span></div>
+        <div class="league-points">LP: <span class="leaguePoints">75</span></div>
+      </div>
+    </div>
+    """
+    soup = BeautifulSoup(html, "lxml")
+    rank = _parse_solo_rank(soup)
+    assert rank == {"tier": "silver", "division": "I", "lp": 75}
