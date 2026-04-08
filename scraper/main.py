@@ -78,7 +78,7 @@ def run():
             log.info(f"  → Cached match {match_id} ({len(match_data['participants'])} participants)")
         except Exception as e:
             log.warning(f"  → Failed to fetch match {match_id}: {e}")
-        time.sleep(0.5)
+        time.sleep(2)
 
 
 if __name__ == "__main__":
