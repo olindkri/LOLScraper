@@ -3,9 +3,10 @@ import ChampionBadge from './ChampionBadge';
 
 const RANK_COLORS = ['#f59e0b', '#94a3b8', '#cd7f32'];
 
-function GameDot({ result }) {
+function GameDot({ result, className }) {
   return (
     <span
+      className={className}
       style={{
         display: 'inline-block',
         width: '10px',
@@ -80,35 +81,7 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
         {/* Name */}
         <td style={{ padding: '14px 12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {soloRank && (() => {
-              const RANK_COLORS_TEXT = {
-                iron:        '#6C5849',
-                bronze:      '#A96433',
-                silver:      '#7B9AA1',
-                gold:        '#C8981E',
-                platinum:    '#4C9E91',
-                emerald:     '#2EAA4B',
-                diamond:     '#576BCE',
-                master:      '#9B3FE8',
-                grandmaster: '#D44242',
-                challenger:  '#F5C94B',
-              };
-              const TIER_LABELS = { grandmaster: 'GRAND MASTER' };
-              const color = RANK_COLORS_TEXT[soloRank.tier] ?? 'var(--fg-dim)';
-              const tierLabel = TIER_LABELS[soloRank.tier] ?? soloRank.tier.toUpperCase();
-              const subLabel = soloRank.division ? `${soloRank.division} — ${soloRank.lp} LP` : `${soloRank.lp} LP`;
-              return (
-                <div style={{ textAlign: 'right', lineHeight: 1.2, flexShrink: 0 }}>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', fontWeight: 700, color, letterSpacing: '0.06em' }}>
-                    {tierLabel}
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color, opacity: 0.75, letterSpacing: '0.03em' }}>
-                    {subLabel}
-                  </div>
-                </div>
-              );
-            })()}
-            <div>
+            <div style={{ minWidth: 0 }}>
               <div style={{
                 fontFamily: 'var(--font-head)',
                 fontSize: '0.85rem',
@@ -130,16 +103,39 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                 </div>
               )}
             </div>
-            {expanded && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--fg-dim)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                <polyline points="18 15 12 9 6 15" />
-              </svg>
-            )}
-            {!expanded && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--fg-dim)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            )}
+            {soloRank && (() => {
+              const RANK_COLORS_TEXT = {
+                iron:        '#6C5849',
+                bronze:      '#A96433',
+                silver:      '#7B9AA1',
+                gold:        '#C8981E',
+                platinum:    '#4C9E91',
+                emerald:     '#2EAA4B',
+                diamond:     '#576BCE',
+                master:      '#9B3FE8',
+                grandmaster: '#D44242',
+                challenger:  '#F5C94B',
+              };
+              const TIER_LABELS = { grandmaster: 'GRAND MASTER' };
+              const color = RANK_COLORS_TEXT[soloRank.tier] ?? 'var(--fg-dim)';
+              const tierLabel = TIER_LABELS[soloRank.tier] ?? soloRank.tier.toUpperCase();
+              const rankLabel = soloRank.division ? `${tierLabel} ${soloRank.division} - ${soloRank.lp} LP` : `${tierLabel} - ${soloRank.lp} LP`;
+              return (
+                <div style={{
+                  marginLeft: 'auto',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.65rem',
+                  fontWeight: 700,
+                  color,
+                  letterSpacing: '0.04em',
+                  textAlign: 'right',
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap',
+                }}>
+                  {rankLabel}
+                </div>
+              );
+            })()}
           </div>
         </td>
 
@@ -173,7 +169,9 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
         <td style={{ padding: '14px 12px' }}>
           <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
             {games.length > 0
-              ? games.slice(0, 15).map((g, i) => <GameDot key={i} result={g.result} />)
+              ? games.slice(0, 15).map((g, i) => (
+                  <GameDot key={i} result={g.result} className={i >= 5 ? 'mobile-dot-hidden' : undefined} />
+                ))
               : <span style={{ fontSize: '0.7rem', color: 'var(--fg-dim)', fontFamily: 'var(--font-mono)' }}>no data</span>
             }
           </div>
