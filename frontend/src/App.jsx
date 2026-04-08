@@ -72,16 +72,7 @@ export default function App() {
       }}>
         {/* Logo + title */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingRight: '28px', borderRight: '1px solid var(--border)', marginRight: '28px', alignSelf: 'stretch', paddingTop: '12px', paddingBottom: '12px' }}>
-          <div style={{
-            width: '32px', height: '32px',
-            background: 'linear-gradient(135deg, var(--accent), #a855f7)',
-            borderRadius: '8px',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 0 16px var(--accent-soft)',
-            flexShrink: 0,
-          }}>
-            <span style={{ fontSize: '18px', lineHeight: 1 }} role="img" aria-label="cow">🐄</span>
-          </div>
+          <span style={{ fontSize: '28px', lineHeight: 1, flexShrink: 0 }} role="img" aria-label="cow">🐄</span>
           <span style={{ fontFamily: 'var(--font-head)', fontSize: '1rem', letterSpacing: '0.05em', color: 'var(--fg)' }}>
             BABY COW
           </span>
