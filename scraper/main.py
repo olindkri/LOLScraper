@@ -69,7 +69,7 @@ def run():
         if g.get("matchId")
     }
     cached_ids = read_cached_match_ids(DATABASE_URL)
-    new_ids = all_match_ids - cached_ids
+    new_ids = sorted(all_match_ids - cached_ids)[:30]
     log.info(f"Fetching {len(new_ids)} new matches ({len(cached_ids)} already cached).")
     for match_id in new_ids:
         try:
