@@ -68,7 +68,7 @@ export default function App() {
         alignItems: 'center',
         gap: '0',
         flexWrap: 'wrap',
-        minHeight: '64px',
+        minHeight: '96px',
       }}>
         {/* Logo + title */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingRight: '28px', borderRight: '1px solid var(--border)', marginRight: '28px', alignSelf: 'stretch', paddingTop: '12px', paddingBottom: '12px' }}>
@@ -127,7 +127,9 @@ export default function App() {
           </div>
         </div>
 
-        <RecordBanner records={records} />
+        <div style={{ paddingLeft: '16px', paddingTop: '8px', paddingBottom: '8px' }}>
+          <RecordBanner records={records} />
+        </div>
 
         {/* Updated timestamp */}
         {group?.lastUpdated && (

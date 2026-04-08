@@ -41,7 +41,7 @@ def _parse_match_soup(match_id: str, soup: BeautifulSoup) -> dict:
                 m = re.search(r"(\d+)\s*CS", cs_div.get_text())
                 cs = int(m.group(1)) if m else 0
 
-            score = round((kills * 2 + assists) / max(deaths, 1) + cs / 100, 1)
+            score = min(10.0, round((kills * 2 + assists) / max(deaths, 1) + cs / 100, 1))
 
             participants.append({
                 "summonerName": summoner_name,

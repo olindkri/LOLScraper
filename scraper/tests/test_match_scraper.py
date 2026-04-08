@@ -52,8 +52,8 @@ def test_cs_parsed_correctly():
 def test_score_formula():
     result = _parse_match_soup("12345", get_soup())
     hopa = next(p for p in result["participants"] if p["summonerName"] == "Hopa#Hopa")
-    # score = (5*2 + 8) / max(2,1) + 200/100 = 18/2 + 2.0 = 9.0 + 2.0 = 11.0
-    assert hopa["score"] == 11.0
+    # score = min(10.0, (5*2 + 8) / max(2,1) + 200/100) = min(10.0, 11.0) = 10.0
+    assert hopa["score"] == 10.0
 
 
 def test_team_kills_summed():
