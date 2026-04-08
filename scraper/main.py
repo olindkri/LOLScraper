@@ -24,8 +24,11 @@ def run():
     for player in PLAYERS:
         log.info(f"Scraping {player['displayName']} ({player['url']})")
         try:
-            games, rank = fetch_games_for_player(player["url"])
+            games, rank, mastery = fetch_games_for_player(player["url"])
             stats = compute_player_stats(games)
+            mastery_pts = mastery.get(stats["mostPlayedChampion"])
+            if mastery_pts is not None:
+                stats["mostPlayedChampionMastery"] = mastery_pts
             all_player_data.append({
                 **player,
                 "games": games,
