@@ -43,3 +43,17 @@ def read_records(database_url: str) -> dict:
 def write_records(records: dict, database_url: str) -> None:
     _init_app(database_url)
     db.reference("/records").set(records)
+
+
+def read_cached_match_ids(database_url: str) -> set:
+    _init_app(database_url)
+    data = db.reference("/matches").get()
+    if not data:
+        return set()
+    return set(data.keys())
+
+
+def write_match(match_data: dict, database_url: str) -> None:
+    _init_app(database_url)
+    match_id = match_data["matchId"]
+    db.reference(f"/matches/{match_id}").set(match_data)

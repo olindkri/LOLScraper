@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock
-from firebase_client import build_payload, write_to_firebase, read_records, write_records
+from firebase_client import build_payload, write_to_firebase, read_records, write_records, read_cached_match_ids, write_match
 
 SAMPLE_PLAYERS = [
     {
@@ -68,3 +68,35 @@ def test_write_records_calls_set(mocker):
     write_records(records, "https://fake.firebaseio.com")
     mock_db_ref.assert_called_with("/records")
     mock_ref.set.assert_called_once_with(records)
+
+
+def test_read_cached_match_ids_returns_set(mocker):
+    mock_ref = MagicMock()
+    mock_ref.get.return_value = {
+        "7813808785": {"matchId": "7813808785"},
+        "7813808786": {"matchId": "7813808786"},
+    }
+    mocker.patch("firebase_client._init_app")
+    mock_db_ref = mocker.patch("firebase_client.db.reference", return_value=mock_ref)
+    result = read_cached_match_ids("https://fake.firebaseio.com")
+    assert result == {"7813808785", "7813808786"}
+    mock_db_ref.assert_called_with("/matches")
+
+
+def test_read_cached_match_ids_returns_empty_when_none(mocker):
+    mock_ref = MagicMock()
+    mock_ref.get.return_value = None
+    mocker.patch("firebase_client._init_app")
+    mocker.patch("firebase_client.db.reference", return_value=mock_ref)
+    result = read_cached_match_ids("https://fake.firebaseio.com")
+    assert result == set()
+
+
+def test_write_match_calls_set_at_correct_path(mocker):
+    mock_ref = MagicMock()
+    mocker.patch("firebase_client._init_app")
+    mock_db_ref = mocker.patch("firebase_client.db.reference", return_value=mock_ref)
+    match_data = {"matchId": "7813808785", "participants": [], "team1Kills": 20, "team2Kills": 15}
+    write_match(match_data, "https://fake.firebaseio.com")
+    mock_db_ref.assert_called_with("/matches/7813808785")
+    mock_ref.set.assert_called_once_with(match_data)
