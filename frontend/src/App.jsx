@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { useGameData } from './hooks/useGameData';
 import ScoreboardRow from './components/ScoreboardRow';
 import RecordBanner from './components/RecordBanner';
+import MatchModal from './components/MatchModal';
 
 function timeAgo(isoString) {
   if (!isoString) return null;
@@ -13,6 +15,7 @@ function timeAgo(isoString) {
 
 export default function App() {
   const { players, group, records, loading } = useGameData();
+  const [selectedMatchId, setSelectedMatchId] = useState(null);
 
   if (loading) {
     return (
@@ -170,6 +173,7 @@ export default function App() {
                   rank={i + 1}
                   player={p}
                   isEven={i % 2 === 0}
+                  onGameClick={setSelectedMatchId}
                 />
               ))
             )}
@@ -193,6 +197,11 @@ export default function App() {
         <span>Solo/Duo + Flex · last 30 ranked games per player · data from leagueofgraphs.com</span>
         <span>auto-refresh every 30 min</span>
       </footer>
+
+      <MatchModal
+        matchId={selectedMatchId}
+        onClose={() => setSelectedMatchId(null)}
+      />
     </div>
   );
 }
