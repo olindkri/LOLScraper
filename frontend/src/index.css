@@ -45,3 +45,28 @@ body {
   from { transform: scale(0.95); opacity: 0; }
   to   { transform: scale(1);    opacity: 1; }
 }
+
+@media (max-width: 640px) {
+  /* Hide non-essential scoreboard columns */
+  .col-kda,
+  .col-cs,
+  .col-champ {
+    display: none;
+  }
+
+  /* Hide game dots 6–15, show only first 5 */
+  .mobile-dot-hidden {
+    display: none;
+  }
+
+  /* Hide record banner — not enough space */
+  .header-record {
+    display: none;
+  }
+
+  /* Tighten header padding */
+  .app-header {
+    padding: 0 12px;
+    min-height: unset;
+  }
+}
