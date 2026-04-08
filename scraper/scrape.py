@@ -23,16 +23,21 @@ def fetch_page(url: str) -> BeautifulSoup:
     return BeautifulSoup(resp.text, "lxml")
 
 
-def fetch_games_for_player(base_url: str, target: int = 30) -> list[dict]:
+def fetch_games_for_player(base_url: str, target: int = 30) -> tuple[list[dict], dict | None]:
     """
-    Fetch up to `target` ranked games for a player.
+    Fetch up to `target` ranked games and the current Solo/Duo rank for a player.
 
-    Loads the first 10 from the main page, then follows the AJAX cursor
+    Loads the first 10 games from the main page, then follows the AJAX cursor
     embedded in `data-additional-url` on the "See more" button to fetch
     subsequent batches of 10 until `target` is reached or no more exist.
+
+    Returns:
+        A tuple of (games, rank) where rank is a dict with keys 'tier',
+        'division', 'lp', or None if the player is unranked.
     """
-    # Page 1: full summoner page
+    # Page 1: full summoner page — extract rank before pagination
     soup = fetch_page(base_url)
+    rank = _parse_solo_rank(soup)
     games = _parse_rows(soup.find_all("tr"))
 
     # Subsequent pages: AJAX partial responses (raw <tr> rows, no table wrapper)
@@ -49,7 +54,7 @@ def fetch_games_for_player(base_url: str, target: int = 30) -> list[dict]:
 
         games.extend(new_games)
 
-    return games[:target]
+    return games[:target], rank
 
 
 def _parse_rows(rows) -> list[dict]:

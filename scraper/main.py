@@ -24,20 +24,23 @@ def run():
     for player in PLAYERS:
         log.info(f"Scraping {player['displayName']} ({player['url']})")
         try:
-            games = fetch_games_for_player(player["url"])
+            games, rank = fetch_games_for_player(player["url"])
             stats = compute_player_stats(games)
             all_player_data.append({
                 **player,
                 "games": games,
                 "stats": stats,
+                "soloRank": rank,
             })
-            log.info(f"  → {len(games)} ranked games, {stats['wins']}W {stats['losses']}L")
+            rank_str = f"{rank['tier']} {rank['division'] or ''} {rank['lp']} LP".strip() if rank else "unranked"
+            log.info(f"  → {len(games)} ranked games, {stats['wins']}W {stats['losses']}L, {rank_str}")
         except Exception as e:
             log.warning(f"  → Failed to scrape {player['displayName']}: {e}")
             all_player_data.append({
                 **player,
                 "games": [],
                 "stats": compute_player_stats([]),
+                "soloRank": None,
             })
         time.sleep(1)
 
