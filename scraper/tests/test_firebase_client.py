@@ -114,3 +114,9 @@ def test_build_payload_solo_rank_none_when_unranked():
     unranked_players = [{**SAMPLE_PLAYERS[0], "soloRank": None}]
     payload = build_payload(unranked_players, SAMPLE_GROUP)
     assert payload["players"]["oliver"]["soloRank"] is None
+
+
+def test_build_payload_solo_rank_absent_key_defaults_to_none():
+    players_without_rank_key = [{k: v for k, v in SAMPLE_PLAYERS[0].items() if k != "soloRank"}]
+    payload = build_payload(players_without_rank_key, SAMPLE_GROUP)
+    assert payload["players"]["oliver"]["soloRank"] is None
