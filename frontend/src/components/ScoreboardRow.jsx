@@ -94,7 +94,10 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                 {soloRank && (
                   <img
                     src={`https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/${soloRank.tier}.png`}
-                    alt={soloRank.tier}
+                    alt={soloRank.division
+                      ? `${soloRank.tier.charAt(0).toUpperCase()}${soloRank.tier.slice(1)} ${soloRank.division}`
+                      : `${soloRank.tier.charAt(0).toUpperCase()}${soloRank.tier.slice(1)}`
+                    }
                     title={soloRank.division
                       ? `${soloRank.tier.charAt(0).toUpperCase()}${soloRank.tier.slice(1)} ${soloRank.division} — ${soloRank.lp} LP`
                       : `${soloRank.tier.charAt(0).toUpperCase()}${soloRank.tier.slice(1)} — ${soloRank.lp} LP`
