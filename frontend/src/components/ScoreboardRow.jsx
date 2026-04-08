@@ -100,13 +100,13 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                     silver: '/ranks/7455-silver.png',
                     gold: '/ranks/1053-gold.png',
                     platinum: '/ranks/3978-platinum.png',
+                    emerald: '/ranks/emerald.png',
                     diamond: '/ranks/1053-diamond.png',
                     master: '/ranks/9231-master.png',
                     grandmaster: '/ranks/9476-grandmaster.png',
                     challenger: '/ranks/9476-challenger.png',
                   };
-                  const CDN = 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default';
-                  const src = RANK_ICONS[soloRank.tier] ?? `${CDN}/ranked-emblem/tier/${soloRank.tier}-plate.png`;
+                  const src = RANK_ICONS[soloRank.tier] ?? null;
                   return (
                     <img
                       src={src}
