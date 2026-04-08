@@ -46,6 +46,9 @@ body {
   to   { transform: scale(1);    opacity: 1; }
 }
 
+/* Default: hide mobile-only rank label */
+.rank-label-mobile { display: none; }
+
 @media (max-width: 640px) {
   /* Hide non-essential scoreboard columns */
   .col-kda,
@@ -54,19 +57,33 @@ body {
     display: none;
   }
 
-  /* Hide game dots 6–15, show only first 5 */
+  /* Hide game dots 6–15, show only first 5 — !important overrides inline display style */
   .mobile-dot-hidden {
-    display: none;
+    display: none !important;
   }
 
+  /* Swap rank labels: hide desktop (with LP), show mobile (no LP, smaller) */
+  .rank-label-desktop { display: none; }
+  .rank-label-mobile  { display: block; }
+
+  /* Hide gamertag — saves vertical space */
+  .player-gamertag { display: none; }
+
+  /* Hide win rate bar — saves ~80px of column width */
+  .winrate-bar { display: none; }
+
   /* Hide record banner — not enough space */
-  .header-record {
-    display: none;
-  }
+  .header-record { display: none; }
 
   /* Tighten header padding */
   .app-header {
     padding: 0 12px;
     min-height: unset;
   }
+
+  /* Tighten cell padding to reclaim horizontal space */
+  .rank-number-td { padding: 10px 4px 10px 8px !important; width: 28px !important; }
+  .player-td      { padding: 10px 6px !important; }
+  .winrate-td     { padding: 10px 6px !important; width: auto !important; }
+  .dots-td        { padding: 10px 6px !important; }
 }
