@@ -224,7 +224,7 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
         <tr style={{ borderBottom: '1px solid var(--border)' }}>
           <td colSpan={7} style={{ padding: '0', backgroundColor: 'var(--card-hover)' }}>
             <div style={{ borderTop: '1px solid var(--border-hi)', overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+              <table className="inner-game-table" style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
                 <thead>
                   <tr style={{ backgroundColor: 'var(--card)', color: 'var(--fg-dim)', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.65rem' }}>
                     <th style={{ padding: '8px 12px 8px 24px', textAlign: 'left' }}>Result</th>
@@ -279,15 +279,15 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                             }}
                           />
                         </td>
-                        <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-muted)' }}>
+                        <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-muted)', whiteSpace: 'nowrap' }}>
                           <span style={{ color: 'var(--fg)' }}>{g.kills}</span>
-                          <span style={{ color: 'var(--fg-dim)' }}> / </span>
+                          <span style={{ color: 'var(--fg-dim)' }}>/</span>
                           <span style={{ color: g.deaths >= 7 ? 'var(--loss)' : 'var(--fg)' }}>{g.deaths}</span>
-                          <span style={{ color: 'var(--fg-dim)' }}> / </span>
+                          <span style={{ color: 'var(--fg-dim)' }}>/</span>
                           <span style={{ color: 'var(--fg)' }}>{g.assists}</span>
                         </td>
                         <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-muted)' }}>{g.cs}</td>
-                        <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-dim)' }}>{g.duration}</td>
+                        <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-dim)', whiteSpace: 'nowrap' }}>{g.duration}</td>
                       </tr>
                     );
                   })}

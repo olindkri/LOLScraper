@@ -98,7 +98,7 @@ export default function MatchModal({ matchId, onClose }) {
         </div>
 
         {/* Body */}
-        <div style={{ padding: '20px 24px' }}>
+        <div className="modal-body" style={{ padding: '20px 24px' }}>
           {loading && (
             <div style={{ textAlign: 'center', color: 'var(--fg-dim)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', padding: '48px' }}>
               Loading…
@@ -110,7 +110,7 @@ export default function MatchModal({ matchId, onClose }) {
             </div>
           )}
           {match && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="modal-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
               <TeamColumn
                 title="Team 1"
                 players={team1}
