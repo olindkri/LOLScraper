@@ -80,3 +80,49 @@ def test_lp_delta_none_when_absent():
     # The first game in the fixture is a promotion row — lpChange contains
     # "Promoted to Silver II" text, no numeric LP → lpDelta must be None
     assert games[0]["lpDelta"] is None
+
+
+from bs4 import BeautifulSoup as _BS
+from scrape import _parse_solo_rank
+
+
+def test_parse_solo_rank_returns_tier_division_lp():
+    rank = _parse_solo_rank(get_soup())
+    assert rank is not None
+    assert rank["tier"] == "emerald"
+    assert rank["division"] == "IV"
+    assert rank["lp"] == 1
+
+
+def test_parse_solo_rank_unranked_returns_none():
+    soup = _BS("<html></html>", "lxml")
+    assert _parse_solo_rank(soup) is None
+
+
+def test_parse_solo_rank_apex_tier_no_division():
+    html = """
+    <div class="best-league">
+      <div class="best-league__inner">
+        <div class="leagueTier">Master</div>
+        <div class="queueLine"><span class="queue">Soloqueue</span></div>
+        <div class="league-points">LP: <span class="leaguePoints">1234</span></div>
+      </div>
+    </div>
+    """
+    soup = _BS(html, "lxml")
+    rank = _parse_solo_rank(soup)
+    assert rank == {"tier": "master", "division": None, "lp": 1234}
+
+
+def test_parse_solo_rank_ignores_flex():
+    html = """
+    <div class="best-league">
+      <div class="best-league__inner">
+        <div class="leagueTier">Gold II</div>
+        <div class="queueLine"><span class="queue">Flex 5v5</span></div>
+        <div class="league-points">LP: <span class="leaguePoints">50</span></div>
+      </div>
+    </div>
+    """
+    soup = _BS(html, "lxml")
+    assert _parse_solo_rank(soup) is None

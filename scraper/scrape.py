@@ -149,3 +149,31 @@ def _parse_span_int(parent, class_name: str) -> int:
 def _to_int(text: str) -> int:
     m = re.search(r"\d+", text.replace(",", ""))
     return int(m.group()) if m else 0
+
+
+def _parse_solo_rank(soup: BeautifulSoup) -> dict | None:
+    """Extract the Solo/Duo rank from the summoner page soup.
+
+    Returns a dict with keys 'tier', 'division', 'lp', or None if the player
+    is unranked or the page does not contain a parseable Solo/Duo rank block.
+    """
+    for block in soup.select(".best-league"):
+        queue_el = block.find(class_="queue")
+        if not queue_el or "soloqueue" not in queue_el.get_text(strip=True).lower():
+            continue
+
+        tier_el = block.find(class_="leagueTier")
+        if not tier_el:
+            continue
+        tier_text = tier_el.get_text(strip=True)  # e.g. "Emerald IV" or "Master"
+
+        lp_el = block.find(class_="leaguePoints")
+        lp = int(lp_el.get_text(strip=True)) if lp_el else 0
+
+        parts = tier_text.split()
+        tier = parts[0].lower()           # "emerald", "master", etc.
+        division = parts[1] if len(parts) > 1 else None  # "IV" or None for apex tiers
+
+        return {"tier": tier, "division": division, "lp": lp}
+
+    return None
