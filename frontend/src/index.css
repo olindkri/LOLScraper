@@ -39,3 +39,8 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+@keyframes modalEnter {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
