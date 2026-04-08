@@ -5,7 +5,8 @@ import logging
 from players import PLAYERS
 from scrape import fetch_games_for_player
 from stats import compute_player_stats, compute_group_stats
-from firebase_client import write_to_firebase
+from records import update_records
+from firebase_client import write_to_firebase, read_records, write_records
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
@@ -44,6 +45,19 @@ def run():
 
     write_to_firebase(all_player_data, group, DATABASE_URL)
     log.info("Data written to Firebase successfully.")
+
+    existing_records = read_records(DATABASE_URL)
+    new_records = update_records(all_player_data, existing_records)
+    if new_records is not None:
+        write_records(new_records, DATABASE_URL)
+        streak = new_records.get("bestWinStreak", {})
+        kda = new_records.get("bestKda", {})
+        if streak:
+            log.info(f"  🏆 New streak record: {streak['displayName']} — {streak['value']} wins")
+        if kda:
+            log.info(f"  ⚡ New KDA record: {kda['displayName']} — {kda['value']}")
+    else:
+        log.info("Records unchanged.")
 
 
 if __name__ == "__main__":
