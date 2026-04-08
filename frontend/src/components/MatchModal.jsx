@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ref, get } from 'firebase/database';
 import { db } from '../firebase';
 import { TRACKED_GAMERTAGS } from '../trackedPlayers';
+import ChampionBadge from './ChampionBadge';
 
 export default function MatchModal({ matchId, onClose }) {
   const [match, setMatch] = useState(null);
@@ -214,9 +215,14 @@ function ParticipantRow({ participant, teamKills, teamColor }) {
     }}>
       {/* Row 1: Champion + Summoner name + Score badge */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontFamily: 'var(--font-head)', fontSize: '0.85rem', color: 'var(--fg)', minWidth: '84px' }}>
-          {participant.champion || '—'}
-        </span>
+        <ChampionBadge
+          championName={participant.champion}
+          size={22}
+          textStyle={{
+            color: 'var(--fg)',
+            fontFamily: 'var(--font-data)',
+          }}
+        />
         <span style={{
           fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
           color: isTracked ? 'var(--fg)' : 'var(--fg-muted)',
