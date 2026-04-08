@@ -10,7 +10,20 @@ def test_win_streak_all_wins():
 
 def test_win_streak_starts_with_loss():
     games = [{"result": "loss"}, {"result": "win"}, {"result": "win"}]
-    assert compute_win_streak(games) == 0
+    assert compute_win_streak(games) == 2
+
+
+def test_win_streak_best_not_at_front():
+    games = [
+        {"result": "loss"},
+        {"result": "win"},
+        {"result": "win"},
+        {"result": "win"},
+        {"result": "win"},
+        {"result": "loss"},
+        {"result": "win"},
+    ]
+    assert compute_win_streak(games) == 4
 
 
 def test_win_streak_mixed():

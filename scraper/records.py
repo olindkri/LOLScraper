@@ -2,13 +2,15 @@ from datetime import datetime, timezone
 
 
 def compute_win_streak(games: list[dict]) -> int:
-    streak = 0
+    max_streak = 0
+    current = 0
     for game in games:
         if game["result"] == "win":
-            streak += 1
+            current += 1
+            max_streak = max(max_streak, current)
         else:
-            break
-    return streak
+            current = 0
+    return max_streak
 
 
 def update_records(all_player_data: list[dict], existing: dict) -> dict | None:
