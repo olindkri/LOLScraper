@@ -38,7 +38,7 @@ const GAMERTAGS = {
 export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
   const [expanded, setExpanded] = useState(false);
   const { id, displayName, gamertag, games = [], stats = {}, soloRank = null } = player;
-  const { wins = 0, losses = 0, winRate = 0, avgKda = 0, avgCs = 0, mostPlayedChampion = '' } = stats;
+  const { wins = 0, losses = 0, winRate = 0, avgKda = 0, avgCs = 0, mostPlayedChampion = '', mostPlayedChampionMastery = null } = stats;
   const pct = Math.round(winRate * 100);
   const isWinning = pct >= 50;
   const tag = gamertag || GAMERTAGS[id] || null;
@@ -204,15 +204,27 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
         <td className="col-champ" style={{ padding: '14px 20px 14px 12px' }}>
           {mostPlayedChampion
             ? (
-              <ChampionBadge
-                championName={mostPlayedChampion}
-                size={20}
-                textStyle={{
-                  fontSize: '0.78rem',
-                  color: 'var(--fg-muted)',
-                  fontFamily: 'var(--font-data)',
-                }}
-              />
+              <>
+                <ChampionBadge
+                  championName={mostPlayedChampion}
+                  size={20}
+                  textStyle={{
+                    fontSize: '0.78rem',
+                    color: 'var(--fg-muted)',
+                    fontFamily: 'var(--font-data)',
+                  }}
+                />
+                {mostPlayedChampionMastery > 0 && (
+                  <div style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.65rem',
+                    color: 'var(--fg-dim)',
+                    marginTop: '2px',
+                  }}>
+                    {Math.round(mostPlayedChampionMastery / 1000)}K pts
+                  </div>
+                )}
+              </>
             )
             : <span style={{ fontSize: '0.7rem', color: 'var(--fg-dim)' }}>—</span>
           }
