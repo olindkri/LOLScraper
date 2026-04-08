@@ -96,7 +96,7 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                   const rankLabel = soloRank.division ? `${tierLabel} ${soloRank.division}` : tierLabel;
                   return (
                     <img
-                      src={`https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/${soloRank.tier}.png`}
+                      src={`https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-${soloRank.tier}.png`}
                       alt={rankLabel}
                       title={`${rankLabel} — ${soloRank.lp} LP`}
                       width={16}
