@@ -100,8 +100,8 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                       src={src}
                       alt={rankLabel}
                       title={`${rankLabel} — ${soloRank.lp} LP`}
-                      width={20}
-                      height={20}
+                      width={100}
+                      height={100}
                       style={{ flexShrink: 0 }}
                       onError={e => { e.currentTarget.style.display = 'none'; }}
                     />
