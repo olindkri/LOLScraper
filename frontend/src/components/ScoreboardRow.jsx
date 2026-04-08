@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ChampionBadge from './ChampionBadge';
 
 const RANK_COLORS = ['#f59e0b', '#94a3b8', '#cd7f32'];
 
@@ -35,7 +36,7 @@ const GAMERTAGS = {
 
 export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
   const [expanded, setExpanded] = useState(false);
-  const { id, displayName, gamertag, games = [], stats = {} } = player;
+  const { id, displayName, gamertag, games = [], stats = {}, soloRank = null } = player;
   const { wins = 0, losses = 0, winRate = 0, avgKda = 0, avgCs = 0, mostPlayedChampion = '' } = stats;
   const pct = Math.round(winRate * 100);
   const isWinning = pct >= 50;
@@ -80,14 +81,30 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
         <td style={{ padding: '14px 12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div>
-              <div style={{
-                fontFamily: 'var(--font-head)',
-                fontSize: '0.85rem',
-                color: 'var(--fg)',
-                letterSpacing: '0.02em',
-                lineHeight: 1.2,
-              }}>
-                {displayName}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{
+                  fontFamily: 'var(--font-head)',
+                  fontSize: '0.85rem',
+                  color: 'var(--fg)',
+                  letterSpacing: '0.02em',
+                  lineHeight: 1.2,
+                }}>
+                  {displayName}
+                </span>
+                {soloRank && (
+                  <img
+                    src={`https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/${soloRank.tier}.png`}
+                    alt={soloRank.tier}
+                    title={soloRank.division
+                      ? `${soloRank.tier.charAt(0).toUpperCase()}${soloRank.tier.slice(1)} ${soloRank.division} — ${soloRank.lp} LP`
+                      : `${soloRank.tier.charAt(0).toUpperCase()}${soloRank.tier.slice(1)} — ${soloRank.lp} LP`
+                    }
+                    width={16}
+                    height={16}
+                    style={{ flexShrink: 0 }}
+                    onError={e => { e.currentTarget.style.display = 'none'; }}
+                  />
+                )}
               </div>
               {tag && (
                 <div style={{
@@ -169,7 +186,17 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
         {/* Champion */}
         <td style={{ padding: '14px 20px 14px 12px' }}>
           {mostPlayedChampion
-            ? <span style={{ fontSize: '0.78rem', color: 'var(--fg-muted)', fontFamily: 'var(--font-data)' }}>{mostPlayedChampion}</span>
+            ? (
+              <ChampionBadge
+                championName={mostPlayedChampion}
+                size={20}
+                textStyle={{
+                  fontSize: '0.78rem',
+                  color: 'var(--fg-muted)',
+                  fontFamily: 'var(--font-data)',
+                }}
+              />
+            )
             : <span style={{ fontSize: '0.7rem', color: 'var(--fg-dim)' }}>—</span>
           }
         </td>
@@ -224,7 +251,17 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                             )}
                           </span>
                         </td>
-                        <td style={{ padding: '8px 12px', color: 'var(--fg)' }}>{g.champion || '—'}</td>
+                        <td style={{ padding: '8px 12px', color: 'var(--fg)' }}>
+                          <ChampionBadge
+                            championName={g.champion}
+                            championSlug={g.championSlug}
+                            size={18}
+                            textStyle={{
+                              color: 'var(--fg)',
+                              fontFamily: 'var(--font-data)',
+                            }}
+                          />
+                        </td>
                         <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-muted)' }}>
                           <span style={{ color: 'var(--fg)' }}>{g.kills}</span>
                           <span style={{ color: 'var(--fg-dim)' }}> / </span>
