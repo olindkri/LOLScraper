@@ -40,6 +40,7 @@ def test_game_has_required_fields():
     assert "duration" in game
     assert "queue" in game
     assert "matchId" in game
+    assert "lpDelta" in game
     # matchId may be None if the fixture page lacks match links — that is acceptable
 
 
