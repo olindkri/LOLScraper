@@ -58,3 +58,24 @@ def test_cs_is_int():
     if not games:
         return
     assert isinstance(games[0]["cs"], int)
+
+
+def test_lp_delta_present_for_win():
+    games = parse_games(get_soup())
+    wins_with_lp = [g for g in games if g["result"] == "win" and g.get("lpDelta") is not None]
+    assert wins_with_lp, "expected at least one win with lpDelta in fixture"
+    assert wins_with_lp[0]["lpDelta"] == 25
+
+
+def test_lp_delta_present_for_loss():
+    games = parse_games(get_soup())
+    losses_with_lp = [g for g in games if g["result"] == "loss" and g.get("lpDelta") is not None]
+    assert losses_with_lp, "expected at least one loss with lpDelta in fixture"
+    assert losses_with_lp[0]["lpDelta"] == -15
+
+
+def test_lp_delta_none_when_absent():
+    games = parse_games(get_soup())
+    # The first game in the fixture is a promotion row — lpChange contains
+    # "Promoted to Silver II" text, no numeric LP → lpDelta must be None
+    assert games[0]["lpDelta"] is None

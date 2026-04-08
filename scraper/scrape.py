@@ -74,6 +74,14 @@ def _parse_rows(rows) -> list[dict]:
         result_el = dark_td.find("div", class_="victoryDefeatText")
         result = "win" if result_el and "victory" in result_el.get("class", []) else "loss"
 
+        # LP delta — from lpChange div inside resultCellDark
+        lp_delta = None
+        lp_div = dark_td.find("div", class_="lpChange")
+        if lp_div:
+            lp_match = re.search(r'([+-]\d+)\s*LP', lp_div.get_text())
+            if lp_match:
+                lp_delta = int(lp_match.group(1))
+
         # Champion
         champ_td = row.find("td", class_="championCellLight")
         champ_img = champ_td.find("img") if champ_td else None
@@ -120,6 +128,7 @@ def _parse_rows(rows) -> list[dict]:
             "duration": duration,
             "queue": queue,
             "matchId": match_id,
+            "lpDelta": lp_delta,
         })
 
     return games
