@@ -94,11 +94,19 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                 {soloRank && (() => {
                   const tierLabel = soloRank.tier.charAt(0).toUpperCase() + soloRank.tier.slice(1);
                   const rankLabel = soloRank.division ? `${tierLabel} ${soloRank.division}` : tierLabel;
+                  const RANK_ICONS = {
+                    iron: '/ranks/7574-iron.png',
+                    bronze: '/ranks/1184-bronze.png',
+                    silver: '/ranks/7455-silver.png',
+                    gold: '/ranks/1053-gold.png',
+                    platinum: '/ranks/3978-platinum.png',
+                    diamond: '/ranks/1053-diamond.png',
+                    master: '/ranks/9231-master.png',
+                    grandmaster: '/ranks/9476-grandmaster.png',
+                    challenger: '/ranks/9476-challenger.png',
+                  };
                   const CDN = 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default';
-                  const MINI_CRESTS = new Set(['iron','bronze','silver','gold','platinum','diamond','master','grandmaster','challenger']);
-                  const src = MINI_CRESTS.has(soloRank.tier)
-                    ? `${CDN}/images/ranked-mini-crests/${soloRank.tier}.png`
-                    : `${CDN}/ranked-emblem/tier/${soloRank.tier}-plate.png`;
+                  const src = RANK_ICONS[soloRank.tier] ?? `${CDN}/ranked-emblem/tier/${soloRank.tier}-plate.png`;
                   return (
                     <img
                       src={src}
