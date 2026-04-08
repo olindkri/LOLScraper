@@ -79,3 +79,31 @@ def test_scrape_match_raises_if_no_table(mocker):
         assert False, "Should have raised"
     except ValueError as e:
         assert "00000" in str(e)
+
+
+def test_vision_score_parsed():
+    result = _parse_match_soup("12345", get_soup())
+    hopa = next(p for p in result["participants"] if p["summonerName"] == "Hopa#Hopa")
+    assert hopa["visionScore"] == 28
+
+
+def test_team1_won_is_true():
+    result = _parse_match_soup("12345", get_soup())
+    assert result["team1Won"] is True
+
+
+def test_team1_won_absent_when_no_header():
+    html = """
+    <html><body><table class="matchTable">
+    <tbody>
+    <tr class="playerRow">
+      <td class="summoner_column"><img alt="Aatrox"/><div class="name">A#1</div></td>
+      <td class="kdaColumn"><div class="kda"><span class="kills">1</span>/<span class="deaths">1</span>/<span class="assists">1</span></div><div class="cs">50 CS</div></td>
+      <td class="kdaColumn"><div class="kda"><span class="kills">1</span>/<span class="deaths">1</span>/<span class="assists">1</span></div><div class="cs">50 CS</div></td>
+      <td class="summoner_column"><img alt="Ahri"/><div class="name">B#2</div></td>
+    </tr>
+    </tbody></table></body></html>
+    """
+    soup = BeautifulSoup(html, "lxml")
+    result = _parse_match_soup("99999", soup)
+    assert result["team1Won"] is None
