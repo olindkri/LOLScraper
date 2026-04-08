@@ -41,6 +41,7 @@ export default function MatchModal({ matchId, onClose }) {
       role="dialog"
       aria-modal="true"
       aria-label="Match detail"
+      className="modal-overlay"
       onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 1000,
@@ -52,6 +53,7 @@ export default function MatchModal({ matchId, onClose }) {
       <div
         key={matchId}
         onClick={e => e.stopPropagation()}
+        className="modal-content"
         style={{
           background: 'var(--card)',
           border: '1px solid var(--border-hi)',

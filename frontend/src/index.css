@@ -104,4 +104,8 @@ body {
   /* Move close button to bottom on mobile */
   .modal-close-header { display: none !important; }
   .modal-close-footer { display: block; padding: 12px; border-top: 1px solid var(--border); }
+
+  /* 15% top/bottom margin so iOS Safari taskbars don't overlap */
+  .modal-overlay { padding: 15vh 16px !important; align-items: flex-start !important; }
+  .modal-content { max-height: 70vh !important; }
 }
