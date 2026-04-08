@@ -82,6 +82,7 @@ export default function MatchModal({ matchId, onClose }) {
             </span>
           </div>
           <button
+            className="modal-close-header"
             onClick={onClose}
             aria-label="Close match detail"
             style={{
@@ -127,6 +128,20 @@ export default function MatchModal({ matchId, onClose }) {
               />
             </div>
           )}
+        </div>
+        <div className="modal-close-footer">
+          <button
+            onClick={onClose}
+            aria-label="Close match detail"
+            style={{
+              width: '100%', background: 'none',
+              border: '1px solid var(--border)', borderRadius: '6px',
+              color: 'var(--fg-dim)', cursor: 'pointer', padding: '10px',
+              fontFamily: 'var(--font-mono)', fontSize: '0.75rem',
+            }}
+          >
+            CLOSE
+          </button>
         </div>
       </div>
     </div>
