@@ -91,23 +91,21 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                 }}>
                   {displayName}
                 </span>
-                {soloRank && (
-                  <img
-                    src={`https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/${soloRank.tier}.png`}
-                    alt={soloRank.division
-                      ? `${soloRank.tier.charAt(0).toUpperCase()}${soloRank.tier.slice(1)} ${soloRank.division}`
-                      : `${soloRank.tier.charAt(0).toUpperCase()}${soloRank.tier.slice(1)}`
-                    }
-                    title={soloRank.division
-                      ? `${soloRank.tier.charAt(0).toUpperCase()}${soloRank.tier.slice(1)} ${soloRank.division} — ${soloRank.lp} LP`
-                      : `${soloRank.tier.charAt(0).toUpperCase()}${soloRank.tier.slice(1)} — ${soloRank.lp} LP`
-                    }
-                    width={16}
-                    height={16}
-                    style={{ flexShrink: 0 }}
-                    onError={e => { e.currentTarget.style.display = 'none'; }}
-                  />
-                )}
+                {soloRank && (() => {
+                  const tierLabel = soloRank.tier.charAt(0).toUpperCase() + soloRank.tier.slice(1);
+                  const rankLabel = soloRank.division ? `${tierLabel} ${soloRank.division}` : tierLabel;
+                  return (
+                    <img
+                      src={`https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/${soloRank.tier}.png`}
+                      alt={rankLabel}
+                      title={`${rankLabel} — ${soloRank.lp} LP`}
+                      width={16}
+                      height={16}
+                      style={{ flexShrink: 0 }}
+                      onError={e => { e.currentTarget.style.display = 'none'; }}
+                    />
+                  );
+                })()}
               </div>
               {tag && (
                 <div style={{
