@@ -144,3 +144,20 @@ def test_parse_solo_rank_picks_solo_when_flex_appears_first():
     soup = BeautifulSoup(html, "lxml")
     rank = _parse_solo_rank(soup)
     assert rank == {"tier": "silver", "division": "I", "lp": 75}
+
+
+def test_parse_solo_rank_ignores_nested_lp_text_inside_league_tier():
+    html = """
+    <div class="best-league">
+      <div class="best-league__inner">
+        <div class="leagueTier">
+          Diamond IV <span class="leaguePoints">0 LP</span>
+        </div>
+        <div class="queueLine"><span class="queue">Soloqueue</span></div>
+        <div class="league-points">LP: <span class="leaguePoints highlight">0</span></div>
+      </div>
+    </div>
+    """
+    soup = BeautifulSoup(html, "lxml")
+    rank = _parse_solo_rank(soup)
+    assert rank == {"tier": "diamond", "division": "IV", "lp": 0}

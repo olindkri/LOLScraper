@@ -170,7 +170,16 @@ def _parse_solo_rank(soup: BeautifulSoup) -> dict | None:
         tier_el = block.find(class_="leagueTier")
         if not tier_el:
             continue
-        tier_text = tier_el.get_text(strip=True)  # e.g. "Emerald IV" or "Master"
+        tier_text = ""
+        for text_node in tier_el.find_all(string=True, recursive=False):
+            candidate = text_node.strip()
+            if candidate:
+                tier_text = candidate
+                break
+        if not tier_text:
+            tier_text = next(tier_el.stripped_strings, "")  # e.g. "Emerald IV" or "Master"
+        if not tier_text:
+            continue
 
         lp_el = block.find(class_="leaguePoints")
         lp = _to_int(lp_el.get_text(strip=True)) if lp_el else 0
