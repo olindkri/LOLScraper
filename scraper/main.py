@@ -32,7 +32,7 @@ def run():
                 "stats": stats,
                 "soloRank": rank,
             })
-            rank_str = f"{rank['tier']} {rank['division'] or ''} {rank['lp']} LP".strip() if rank else "unranked"
+            rank_str = " ".join(p for p in [rank['tier'], rank['division'], f"{rank['lp']} LP"] if p) if rank else "unranked"
             log.info(f"  → {len(games)} ranked games, {stats['wins']}W {stats['losses']}L, {rank_str}")
         except Exception as e:
             log.warning(f"  → Failed to scrape {player['displayName']}: {e}")
