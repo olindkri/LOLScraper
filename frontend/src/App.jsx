@@ -1,5 +1,6 @@
 import { useGameData } from './hooks/useGameData';
 import ScoreboardRow from './components/ScoreboardRow';
+import RecordBanner from './components/RecordBanner';
 
 function timeAgo(isoString) {
   if (!isoString) return null;
@@ -11,7 +12,7 @@ function timeAgo(isoString) {
 }
 
 export default function App() {
-  const { players, group, loading } = useGameData();
+  const { players, group, records, loading } = useGameData();
 
   if (loading) {
     return (
@@ -122,6 +123,8 @@ export default function App() {
             <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px', background: 'var(--fg-dim)' }} />
           </div>
         </div>
+
+        <RecordBanner records={records} />
 
         {/* Updated timestamp */}
         {group?.lastUpdated && (
