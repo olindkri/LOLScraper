@@ -33,7 +33,7 @@ const GAMERTAGS = {
   fredrik:  'XxVortexSpeedxX#3845',
 };
 
-export default function ScoreboardRow({ rank, player, isEven }) {
+export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
   const [expanded, setExpanded] = useState(false);
   const { id, displayName, gamertag, games = [], stats = {} } = player;
   const { wins = 0, losses = 0, winRate = 0, avgKda = 0, avgCs = 0, mostPlayedChampion = '' } = stats;
@@ -191,38 +191,45 @@ export default function ScoreboardRow({ rank, player, isEven }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {games.map((g, i) => (
-                    <tr
-                      key={i}
-                      style={{
-                        borderTop: '1px solid var(--border)',
-                        backgroundColor: i % 2 === 0 ? 'transparent' : 'var(--surface)',
-                      }}
-                    >
-                      <td style={{ padding: '8px 12px 8px 24px' }}>
-                        <span style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                          color: g.result === 'win' ? 'var(--win)' : 'var(--loss)',
-                          fontWeight: 600,
-                        }}>
-                          <span style={{ width: '7px', height: '7px', borderRadius: '1px', backgroundColor: g.result === 'win' ? 'var(--win)' : 'var(--loss)', display: 'inline-block', flexShrink: 0 }} />
-                          {g.result === 'win' ? 'WIN' : 'LOSS'}
-                        </span>
-                      </td>
-                      <td style={{ padding: '8px 12px', color: 'var(--fg)' }}>{g.champion || '—'}</td>
-                      <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-muted)' }}>
-                        <span style={{ color: 'var(--fg)' }}>{g.kills}</span>
-                        <span style={{ color: 'var(--fg-dim)' }}> / </span>
-                        <span style={{ color: g.deaths >= 7 ? 'var(--loss)' : 'var(--fg)' }}>{g.deaths}</span>
-                        <span style={{ color: 'var(--fg-dim)' }}> / </span>
-                        <span style={{ color: 'var(--fg)' }}>{g.assists}</span>
-                      </td>
-                      <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-muted)' }}>{g.cs}</td>
-                      <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-dim)' }}>{g.duration}</td>
-                    </tr>
-                  ))}
+                  {games.map((g, i) => {
+                    const clickable = !!g.matchId && !!onGameClick;
+                    return (
+                      <tr
+                        key={i}
+                        onClick={clickable ? () => onGameClick(g.matchId) : undefined}
+                        style={{
+                          borderTop: '1px solid var(--border)',
+                          backgroundColor: i % 2 === 0 ? 'transparent' : 'var(--surface)',
+                          cursor: clickable ? 'pointer' : 'default',
+                        }}
+                        onMouseEnter={clickable ? e => { e.currentTarget.style.backgroundColor = 'var(--card-hover)'; } : undefined}
+                        onMouseLeave={clickable ? e => { e.currentTarget.style.backgroundColor = i % 2 === 0 ? 'transparent' : 'var(--surface)'; } : undefined}
+                      >
+                        <td style={{ padding: '8px 12px 8px 24px' }}>
+                          <span style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            color: g.result === 'win' ? 'var(--win)' : 'var(--loss)',
+                            fontWeight: 600,
+                          }}>
+                            <span style={{ width: '7px', height: '7px', borderRadius: '1px', backgroundColor: g.result === 'win' ? 'var(--win)' : 'var(--loss)', display: 'inline-block', flexShrink: 0 }} />
+                            {g.result === 'win' ? 'WIN' : 'LOSS'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '8px 12px', color: 'var(--fg)' }}>{g.champion || '—'}</td>
+                        <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-muted)' }}>
+                          <span style={{ color: 'var(--fg)' }}>{g.kills}</span>
+                          <span style={{ color: 'var(--fg-dim)' }}> / </span>
+                          <span style={{ color: g.deaths >= 7 ? 'var(--loss)' : 'var(--fg)' }}>{g.deaths}</span>
+                          <span style={{ color: 'var(--fg-dim)' }}> / </span>
+                          <span style={{ color: 'var(--fg)' }}>{g.assists}</span>
+                        </td>
+                        <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-muted)' }}>{g.cs}</td>
+                        <td style={{ padding: '8px 12px', textAlign: 'center', color: 'var(--fg-dim)' }}>{g.duration}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
