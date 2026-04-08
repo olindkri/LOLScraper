@@ -147,7 +147,7 @@ export default function App() {
               <th style={{ padding: '10px 0 10px 20px', width: '40px', textAlign: 'left' }}>#</th>
               <th style={{ padding: '10px 12px', textAlign: 'left' }}>Player</th>
               <th style={{ padding: '10px 12px', textAlign: 'left', width: '160px' }}>Win Rate</th>
-              <th style={{ padding: '10px 12px', textAlign: 'left' }}>Last 10 Games</th>
+              <th style={{ padding: '10px 12px', textAlign: 'left' }}>Last 15 Games</th>
               <th style={{ padding: '10px 12px', textAlign: 'left', width: '60px' }}>KDA</th>
               <th style={{ padding: '10px 12px', textAlign: 'left', width: '60px' }}>CS</th>
               <th style={{ padding: '10px 20px 10px 12px', textAlign: 'left' }}>Top Champ</th>
@@ -187,7 +187,7 @@ export default function App() {
         flexWrap: 'wrap',
         gap: '4px',
       }}>
-        <span>Solo/Duo only · last 10 ranked games per player · data from leagueofgraphs.com</span>
+        <span>Solo/Duo + Flex · last 30 ranked games per player · data from leagueofgraphs.com</span>
         <span>auto-refresh every 30 min</span>
       </footer>
     </div>

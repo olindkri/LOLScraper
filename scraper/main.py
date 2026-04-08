@@ -3,7 +3,7 @@ import sys
 import time
 import logging
 from players import PLAYERS
-from scrape import fetch_page, parse_games
+from scrape import fetch_games_for_player
 from stats import compute_player_stats, compute_group_stats
 from firebase_client import write_to_firebase
 
@@ -22,8 +22,7 @@ def run():
     for player in PLAYERS:
         log.info(f"Scraping {player['displayName']} ({player['url']})")
         try:
-            soup = fetch_page(player["url"])
-            games = parse_games(soup)
+            games = fetch_games_for_player(player["url"])
             stats = compute_player_stats(games)
             all_player_data.append({
                 **player,

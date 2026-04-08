@@ -144,7 +144,7 @@ export default function ScoreboardRow({ rank, player, isEven }) {
         <td style={{ padding: '14px 12px' }}>
           <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
             {games.length > 0
-              ? games.map((g, i) => <GameDot key={i} result={g.result} />)
+              ? games.slice(0, 15).map((g, i) => <GameDot key={i} result={g.result} />)
               : <span style={{ fontSize: '0.7rem', color: 'var(--fg-dim)', fontFamily: 'var(--font-mono)' }}>no data</span>
             }
           </div>

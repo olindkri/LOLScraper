@@ -1,4 +1,5 @@
 import re
+import time
 import requests
 from bs4 import BeautifulSoup
 
@@ -13,6 +14,7 @@ HEADERS = {
 }
 
 RANKED_QUEUES = {"Ranked Solo/Duo", "Ranked Flex"}
+BASE_URL = "https://www.leagueofgraphs.com"
 
 
 def fetch_page(url: str) -> BeautifulSoup:
@@ -21,20 +23,40 @@ def fetch_page(url: str) -> BeautifulSoup:
     return BeautifulSoup(resp.text, "lxml")
 
 
-def parse_games(soup: BeautifulSoup) -> list[dict]:
+def fetch_games_for_player(base_url: str, target: int = 30) -> list[dict]:
     """
-    Parse up to 10 ranked games (Solo/Duo + Flex) from a leagueofgraphs summoner page.
+    Fetch up to `target` ranked games for a player.
 
-    Returns a list of dicts with keys:
-        champion, result, kills, deaths, assists, cs, duration, queue
+    Loads the first 10 from the main page, then follows the AJAX cursor
+    embedded in `data-additional-url` on the "See more" button to fetch
+    subsequent batches of 10 until `target` is reached or no more exist.
     """
+    # Page 1: full summoner page
+    soup = fetch_page(base_url)
+    games = _parse_rows(soup.find_all("tr"))
+
+    # Subsequent pages: AJAX partial responses (raw <tr> rows, no table wrapper)
+    while len(games) < target:
+        btn = soup.find("button", class_="see_more_ajax_button")
+        if not btn or not btn.get("data-additional-url"):
+            break
+
+        time.sleep(0.5)
+        soup = fetch_page(BASE_URL + btn["data-additional-url"])
+        new_games = _parse_rows(soup.find_all("tr"))
+        if not new_games:
+            break
+
+        games.extend(new_games)
+
+    return games[:target]
+
+
+def _parse_rows(rows) -> list[dict]:
+    """Parse ranked games from a list of <tr> elements."""
     games = []
 
-    table = soup.find("table", class_="recentGamesTable")
-    if not table:
-        return games
-
-    for row in table.find_all("tr"):
+    for row in rows:
         classes = row.get("class", [])
         if "recentGamesTableHeader" in classes or "filtersBlock" in classes:
             continue
@@ -91,10 +113,14 @@ def parse_games(soup: BeautifulSoup) -> list[dict]:
             "queue": queue,
         })
 
-        if len(games) == 10:
-            break
-
     return games
+
+
+# Keep parse_games as a thin wrapper for backwards compatibility with tests
+def parse_games(soup: BeautifulSoup) -> list[dict]:
+    table = soup.find("table", class_="recentGamesTable")
+    rows = table.find_all("tr") if table else []
+    return _parse_rows(rows)
 
 
 def _parse_span_int(parent, class_name: str) -> int:
