@@ -178,7 +178,7 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
         </td>
 
         {/* KDA */}
-        <td style={{ padding: '14px 12px', width: '60px' }}>
+        <td className="col-kda" style={{ padding: '14px 12px', width: '60px' }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--fg)' }}>
             {avgKda}
           </span>
@@ -186,7 +186,7 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
         </td>
 
         {/* CS */}
-        <td style={{ padding: '14px 12px', width: '60px' }}>
+        <td className="col-cs" style={{ padding: '14px 12px', width: '60px' }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--fg)' }}>
             {avgCs}
           </span>
@@ -194,7 +194,7 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
         </td>
 
         {/* Champion */}
-        <td style={{ padding: '14px 20px 14px 12px' }}>
+        <td className="col-champ" style={{ padding: '14px 20px 14px 12px' }}>
           {mostPlayedChampion
             ? (
               <ChampionBadge
