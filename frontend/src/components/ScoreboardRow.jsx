@@ -94,13 +94,18 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                 {soloRank && (() => {
                   const tierLabel = soloRank.tier.charAt(0).toUpperCase() + soloRank.tier.slice(1);
                   const rankLabel = soloRank.division ? `${tierLabel} ${soloRank.division}` : tierLabel;
+                  const CDN = 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default';
+                  const MINI_CRESTS = new Set(['iron','bronze','silver','gold','platinum','diamond','master','grandmaster','challenger']);
+                  const src = MINI_CRESTS.has(soloRank.tier)
+                    ? `${CDN}/images/ranked-mini-crests/${soloRank.tier}.png`
+                    : `${CDN}/ranked-emblem/tier/${soloRank.tier}-plate.png`;
                   return (
                     <img
-                      src={`https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-${soloRank.tier}.png`}
+                      src={src}
                       alt={rankLabel}
                       title={`${rankLabel} — ${soloRank.lp} LP`}
-                      width={24}
-                      height={24}
+                      width={20}
+                      height={20}
                       style={{ flexShrink: 0 }}
                       onError={e => { e.currentTarget.style.display = 'none'; }}
                     />
