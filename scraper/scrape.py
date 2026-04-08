@@ -79,6 +79,14 @@ def _parse_rows(rows) -> list[dict]:
         champ_img = champ_td.find("img") if champ_td else None
         champion = champ_img.get("alt", "") if champ_img else ""
 
+        # Match ID — from link on champion cell
+        match_id = None
+        if champ_td:
+            match_link = champ_td.find("a")
+            if match_link and match_link.get("href"):
+                m = re.search(r"/match/\w+/(\d+)", match_link["href"])
+                match_id = m.group(1) if m else None
+
         # KDA
         kda_td = row.find("td", class_="kdaColumn")
         kills = _parse_span_int(kda_td, "kills") if kda_td else 0
@@ -111,6 +119,7 @@ def _parse_rows(rows) -> list[dict]:
             "cs": cs,
             "duration": duration,
             "queue": queue,
+            "matchId": match_id,
         })
 
     return games

@@ -39,6 +39,8 @@ def test_game_has_required_fields():
     assert "cs" in game
     assert "duration" in game
     assert "queue" in game
+    assert "matchId" in game
+    # matchId may be None if the fixture page lacks match links — that is acceptable
 
 
 def test_kills_deaths_assists_are_ints():
