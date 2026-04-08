@@ -99,8 +99,8 @@ export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
                       src={`https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-${soloRank.tier}.png`}
                       alt={rankLabel}
                       title={`${rankLabel} — ${soloRank.lp} LP`}
-                      width={16}
-                      height={16}
+                      width={24}
+                      height={24}
                       style={{ flexShrink: 0 }}
                       onError={e => { e.currentTarget.style.display = 'none'; }}
                     />
