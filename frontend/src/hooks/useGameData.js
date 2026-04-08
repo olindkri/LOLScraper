@@ -2,14 +2,10 @@ import { useEffect, useState } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { db } from '../firebase';
 
-/**
- * Returns { players, group, loading } from Firebase Realtime DB.
- * players: object keyed by player id
- * group: { totalWins, totalLosses, winRate, lastUpdated }
- */
 export function useGameData() {
   const [players, setPlayers] = useState(null);
   const [group, setGroup] = useState(null);
+  const [records, setRecords] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,11 +15,12 @@ export function useGameData() {
       if (data) {
         setPlayers(data.players || {});
         setGroup(data.group || null);
+        setRecords(data.records || null);
       }
       setLoading(false);
     });
     return unsubscribe;
   }, []);
 
-  return { players, group, loading };
+  return { players, group, records, loading };
 }
