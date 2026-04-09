@@ -30,7 +30,7 @@ from scraper.firebase_client import (
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
-DATABASE_URL = os.environ.get("FIREBASE_DATABASE_URL", "")
+DATABASE_URL = os.environ.get("DB_URL", "")
 COOLDOWN_SECONDS = 300  # 5 minutes
 
 
@@ -52,11 +52,11 @@ def find_new_games(page1_games: list[dict], existing_games: list[dict] | dict) -
     schedule="every 20 minutes",
     memory=MemoryOption.MB_512,
     timeout_sec=300,
-    secrets=["FIREBASE_DATABASE_URL"],
+    secrets=["DB_URL"],
 )
 def scheduled_fetch(event: scheduler_fn.ScheduledEvent) -> None:
     """Full scrape — identical to scraper/main.py."""
-    db_url = os.environ.get("FIREBASE_DATABASE_URL", "")
+    db_url = os.environ.get("DB_URL", "")
     _init_app(db_url)
 
     all_player_data = []
@@ -129,11 +129,11 @@ def _seconds_since(iso_timestamp: str | None) -> float:
 @https_fn.on_call(
     timeout_sec=60,
     memory=MemoryOption.MB_512,
-    secrets=["FIREBASE_DATABASE_URL"],
+    secrets=["DB_URL"],
 )
 def quick_fetch(req: https_fn.CallableRequest) -> dict:
     """Incremental fetch: page 1 per player in parallel, writes only new games."""
-    db_url = os.environ.get("FIREBASE_DATABASE_URL", "")
+    db_url = os.environ.get("DB_URL", "")
     _init_app(db_url)
 
     # Enforce cooldown
