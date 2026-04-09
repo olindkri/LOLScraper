@@ -1,5 +1,11 @@
 import pytest
-from records import compute_win_streak, update_records, compute_best_winrate, rank_score
+from records import (
+    compute_best_winrate,
+    compute_lowest_winrate,
+    compute_win_streak,
+    rank_score,
+    update_records,
+)
 
 
 # ── compute_win_streak ──────────────────────────────────────────────────────
@@ -146,6 +152,38 @@ def test_best_winrate_finds_best_window():
 
 def test_best_winrate_empty():
     assert compute_best_winrate([]) is None
+
+
+# ── compute_lowest_winrate ───────────────────────────────────────────────────
+
+def test_lowest_winrate_fewer_than_30_games_returns_none():
+    games = [{"result": "loss"}] * 29
+    assert compute_lowest_winrate(games) is None
+
+
+def test_lowest_winrate_exactly_30_all_losses():
+    games = [{"result": "loss"}] * 30
+    assert compute_lowest_winrate(games) == 0.0
+
+
+def test_lowest_winrate_exactly_30_mixed():
+    games = [{"result": "win"}] * 6 + [{"result": "loss"}] * 24
+    assert compute_lowest_winrate(games) == pytest.approx(6 / 30)
+
+
+def test_lowest_winrate_finds_worst_window():
+    # Window [0:30] = 6 wins, 24 losses. Window [1:31] = 5 wins, 25 losses.
+    games = (
+        [{"result": "win"}]
+        + [{"result": "loss"}] * 24
+        + [{"result": "win"}] * 5
+        + [{"result": "loss"}]
+    )
+    assert compute_lowest_winrate(games) == pytest.approx(5 / 30)
+
+
+def test_lowest_winrate_empty():
+    assert compute_lowest_winrate([]) is None
 
 
 # ── rank_score ───────────────────────────────────────────────────────────────

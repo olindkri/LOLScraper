@@ -33,6 +33,17 @@ def compute_best_winrate(games: list[dict]) -> float | None:
     return best
 
 
+def compute_lowest_winrate(games: list[dict]) -> float | None:
+    if len(games) < 30:
+        return None
+    lowest = 1.0
+    for i in range(len(games) - 29):
+        window = games[i : i + 30]
+        wins = sum(1 for g in window if g["result"] == "win")
+        lowest = min(lowest, wins / 30)
+    return lowest
+
+
 def rank_score(tier: str, division: str | None, lp: int) -> int:
     t = _TIER_SCORES.get((tier or "").lower(), 0)
     d = 4 if (tier or "").lower() in _NO_DIVISION_TIERS else _DIVISION_SCORES.get(division or "", 0)
