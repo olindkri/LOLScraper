@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { GAMERTAGS_BY_ID } from '../trackedPlayers';
 import ChampionBadge from './ChampionBadge';
 
 const RANK_COLORS = ['#f59e0b', '#94a3b8', '#cd7f32'];
@@ -20,28 +21,13 @@ function GameDot({ result, className }) {
   );
 }
 
-// Fallback map until next scraper run populates gamertag in Firebase
-const GAMERTAGS = {
-  oliver:   'Hopa#Hopa',
-  eirik:    'ErikBby69#EUW',
-  marcus:   'Easy Geometry#EUW',
-  minh:     'KingOfTheWolvez#EUW',
-  jon:      'Markemouse#Monke',
-  daniel:   'MczExperttt#EUW',
-  nontagan: 'MrHipsterYip#EUW',
-  tim:      'Pamit#EUW',
-  sigurd:   'Pog0p#EUW',
-  simon:    'sXBLACKPHANTOMXs#2003',
-  fredrik:  'XxVortexSpeedxX#3845',
-};
-
 export default function ScoreboardRow({ rank, player, isEven, onGameClick }) {
   const [expanded, setExpanded] = useState(false);
   const { id, displayName, gamertag, games = [], stats = {}, soloRank = null } = player;
   const { wins = 0, losses = 0, winRate = 0, avgKda = 0, avgCs = 0, mostPlayedChampion = '', mostPlayedChampionMastery = null } = stats;
   const pct = Math.round(winRate * 100);
   const isWinning = pct >= 50;
-  const tag = gamertag || GAMERTAGS[id] || null;
+  const tag = gamertag || GAMERTAGS_BY_ID[id] || null;
   const rankColor = RANK_COLORS[rank - 1] ?? 'var(--fg-dim)';
   const totalGames = wins + losses;
 
