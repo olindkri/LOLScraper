@@ -11,7 +11,7 @@ DATABASE_URL = os.environ.get("FIREBASE_DATABASE_URL", "")
 COOLDOWN_SECONDS = 300  # 5 minutes
 
 
-def find_new_games(page1_games: list[dict], existing_games) -> list[dict]:
+def find_new_games(page1_games: list[dict], existing_games: list[dict] | dict) -> list[dict]:
     """Return games from page1_games whose matchId is not already in existing_games.
 
     Handles edge case where Firebase Realtime DB returns existing_games as a dict
