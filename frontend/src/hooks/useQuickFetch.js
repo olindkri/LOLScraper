@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { httpsCallable } from 'firebase/functions';
 import { db, functions } from '../firebase';
@@ -12,6 +12,8 @@ export function useQuickFetch() {
   const [newGames, setNewGames] = useState(0);
 
   const lastFetchTsRef = useRef(null);
+  const isLoadingRef = useRef(false);
+  const resetTimerRef = useRef(null);
 
   // Subscribe to /metadata/lastManualFetch
   useEffect(() => {
@@ -41,21 +43,28 @@ export function useQuickFetch() {
     return () => clearInterval(interval);
   }, [lastFetchTs]);
 
-  async function trigger() {
-    if (status === 'loading' || cooldownSeconds > 0) return;
-
+  const trigger = useCallback(async () => {
+    if (isLoadingRef.current || cooldownSeconds > 0) return;
+    isLoadingRef.current = true;
     setStatus('loading');
     try {
-      const quickFetch = httpsCallable(functions, 'quick_fetch');
-      const result = await quickFetch();
+      const fn = httpsCallable(functions, 'quick_fetch');
+      const result = await fn();
       setNewGames(result.data?.newGames ?? 0);
+      isLoadingRef.current = false;
       setStatus('success');
-      setTimeout(() => setStatus('idle'), 3000);
-    } catch {
+      clearTimeout(resetTimerRef.current);
+      resetTimerRef.current = setTimeout(() => setStatus('idle'), 3000);
+    } catch (err) {
+      console.error('quickFetch error:', err);
+      isLoadingRef.current = false;
       setStatus('error');
-      setTimeout(() => setStatus('idle'), 3000);
+      clearTimeout(resetTimerRef.current);
+      resetTimerRef.current = setTimeout(() => setStatus('idle'), 3000);
     }
-  }
+  }, [cooldownSeconds]);
+
+  useEffect(() => () => clearTimeout(resetTimerRef.current), []);
 
   return { cooldownSeconds, trigger, status, newGames };
 }
