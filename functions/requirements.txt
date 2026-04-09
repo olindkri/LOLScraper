@@ -1,0 +1,6 @@
+firebase-functions>=0.1.0
+firebase-admin==6.4.0
+requests==2.31.0
+beautifulsoup4==4.12.3
+lxml==5.3.0
+pytest==8.3.5
