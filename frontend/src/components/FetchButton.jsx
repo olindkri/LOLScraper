@@ -37,9 +37,12 @@ export default function FetchButton() {
     label = '↻ Fetch';
   }
 
-  const title = cooldownSeconds > 0
-    ? `Cooldown: ${Math.floor(cooldownSeconds / 60)}m ${cooldownSeconds % 60}s remaining`
-    : 'Fetch latest games';
+  const title =
+    status === 'idle' && cooldownSeconds === 0
+      ? 'Fetch latest games'
+      : cooldownSeconds > 0
+      ? `Cooldown: ${Math.floor(cooldownSeconds / 60)}m ${cooldownSeconds % 60}s remaining`
+      : undefined;
 
   return (
     <>
