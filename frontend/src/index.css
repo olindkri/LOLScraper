@@ -73,8 +73,8 @@ body {
   /* Hide win rate bar — saves ~80px of column width */
   .winrate-bar { display: none; }
 
-  /* Hide record banner — not enough space */
-  .header-record { display: none; }
+  /* Hide records strip — not enough space */
+  .records-strip { display: none !important; }
 
   /* Tighten header padding */
   .app-header {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useGameData } from './hooks/useGameData';
 import ScoreboardRow from './components/ScoreboardRow';
-import RecordBanner from './components/RecordBanner';
+import RecordsStrip from './components/RecordsStrip';
 import MatchModal from './components/MatchModal';
 
 function timeAgo(isoString) {
@@ -63,71 +63,75 @@ export default function App() {
       <header className="app-header" style={{
         background: 'var(--surface)',
         borderBottom: '1px solid var(--border)',
-        padding: '0 24px',
         display: 'flex',
-        alignItems: 'center',
-        gap: '0',
-        flexWrap: 'wrap',
-        minHeight: '96px',
+        flexDirection: 'column',
       }}>
-        {/* Logo + title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingRight: '28px', borderRight: '1px solid var(--border)', marginRight: '28px', alignSelf: 'stretch', paddingTop: '12px', paddingBottom: '12px' }}>
-          <span style={{ fontSize: '28px', lineHeight: 1, flexShrink: 0 }} role="img" aria-label="cow">🐄</span>
-          <span style={{ fontFamily: 'var(--font-head)', fontSize: '1rem', letterSpacing: '0.05em', color: 'var(--fg)' }}>
-            BABY COW
-          </span>
-        </div>
-
-        {/* Group win rate hero */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flex: 1, flexWrap: 'wrap', paddingTop: '12px', paddingBottom: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-            <span style={{
-              fontFamily: 'var(--font-head)',
-              fontSize: '2rem',
-              color: isWinning ? 'var(--win)' : 'var(--loss)',
-              lineHeight: 1,
-              letterSpacing: '0.02em',
-              textShadow: isWinning ? '0 0 24px var(--win-soft)' : '0 0 24px var(--loss-soft)',
-            }}>
-              {pct}%
-            </span>
-            <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.65rem', color: 'var(--fg-dim)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-              Group W/R
+        {/* Row 1: logo + win rate + timestamp */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0',
+          padding: '0 24px',
+          minHeight: '72px',
+        }}>
+          {/* Logo + title */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingRight: '28px', borderRight: '1px solid var(--border)', marginRight: '28px', alignSelf: 'stretch', paddingTop: '12px', paddingBottom: '12px' }}>
+            <span style={{ fontSize: '28px', lineHeight: 1, flexShrink: 0 }} role="img" aria-label="cow">🐄</span>
+            <span style={{ fontFamily: 'var(--font-head)', fontSize: '1rem', letterSpacing: '0.05em', color: 'var(--fg)' }}>
+              BABY COW
             </span>
           </div>
 
-          {/* W / L counts */}
-          <div style={{ display: 'flex', gap: '16px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
-            <span><span style={{ color: 'var(--win)', fontWeight: 600 }}>{totalWins}</span><span style={{ color: 'var(--fg-dim)', fontSize: '0.7rem' }}> W</span></span>
-            <span style={{ color: 'var(--border-hi)' }}>·</span>
-            <span><span style={{ color: 'var(--loss)', fontWeight: 600 }}>{totalLosses}</span><span style={{ color: 'var(--fg-dim)', fontSize: '0.7rem' }}> L</span></span>
-            <span style={{ color: 'var(--border-hi)' }}>·</span>
-            <span style={{ color: 'var(--fg-muted)' }}>{totalGames}<span style={{ color: 'var(--fg-dim)', fontSize: '0.7rem' }}> games</span></span>
+          {/* Group win rate hero */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flex: 1, flexWrap: 'wrap', paddingTop: '12px', paddingBottom: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+              <span style={{
+                fontFamily: 'var(--font-head)',
+                fontSize: '2rem',
+                color: isWinning ? 'var(--win)' : 'var(--loss)',
+                lineHeight: 1,
+                letterSpacing: '0.02em',
+                textShadow: isWinning ? '0 0 24px var(--win-soft)' : '0 0 24px var(--loss-soft)',
+              }}>
+                {pct}%
+              </span>
+              <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.65rem', color: 'var(--fg-dim)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                Group W/R
+              </span>
+            </div>
+
+            {/* W / L counts */}
+            <div style={{ display: 'flex', gap: '16px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
+              <span><span style={{ color: 'var(--win)', fontWeight: 600 }}>{totalWins}</span><span style={{ color: 'var(--fg-dim)', fontSize: '0.7rem' }}> W</span></span>
+              <span style={{ color: 'var(--border-hi)' }}>·</span>
+              <span><span style={{ color: 'var(--loss)', fontWeight: 600 }}>{totalLosses}</span><span style={{ color: 'var(--fg-dim)', fontSize: '0.7rem' }}> L</span></span>
+              <span style={{ color: 'var(--border-hi)' }}>·</span>
+              <span style={{ color: 'var(--fg-muted)' }}>{totalGames}<span style={{ color: 'var(--fg-dim)', fontSize: '0.7rem' }}> games</span></span>
+            </div>
+
+            {/* Win rate bar */}
+            <div style={{ flex: 1, maxWidth: '180px', height: '4px', background: 'var(--border)', borderRadius: '2px', position: 'relative', overflow: 'hidden' }}>
+              <div style={{
+                position: 'absolute', inset: '0 auto 0 0',
+                width: `${pct}%`,
+                background: isWinning ? 'var(--win)' : 'var(--loss)',
+                borderRadius: '2px',
+                transition: 'width 600ms ease',
+              }} />
+              <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px', background: 'var(--fg-dim)' }} />
+            </div>
           </div>
 
-          {/* Win rate bar */}
-          <div style={{ flex: 1, maxWidth: '180px', height: '4px', background: 'var(--border)', borderRadius: '2px', position: 'relative', overflow: 'hidden' }}>
-            <div style={{
-              position: 'absolute', inset: '0 auto 0 0',
-              width: `${pct}%`,
-              background: isWinning ? 'var(--win)' : 'var(--loss)',
-              borderRadius: '2px',
-              transition: 'width 600ms ease',
-            }} />
-            <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px', background: 'var(--fg-dim)' }} />
-          </div>
+          {/* Updated timestamp */}
+          {group?.lastUpdated && (
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--fg-dim)', paddingLeft: '16px', alignSelf: 'center' }}>
+              {timeAgo(group.lastUpdated)}
+            </div>
+          )}
         </div>
 
-        <div className="header-record" style={{ paddingLeft: '16px', paddingTop: '8px', paddingBottom: '8px' }}>
-          <RecordBanner records={records} />
-        </div>
-
-        {/* Updated timestamp */}
-        {group?.lastUpdated && (
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--fg-dim)', paddingLeft: '16px', alignSelf: 'center' }}>
-            {timeAgo(group.lastUpdated)}
-          </div>
-        )}
+        {/* Row 2: records ledger strip */}
+        <RecordsStrip records={records} />
       </header>
 
       {/* ── Scoreboard ── */}
