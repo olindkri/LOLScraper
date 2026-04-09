@@ -3,6 +3,7 @@ import { useGameData } from './hooks/useGameData';
 import ScoreboardRow from './components/ScoreboardRow';
 import RecordsStrip from './components/RecordsStrip';
 import MatchModal from './components/MatchModal';
+import FetchButton from './components/FetchButton';
 
 function timeAgo(isoString) {
   if (!isoString) return null;
@@ -124,8 +125,12 @@ export default function App() {
 
           {/* Updated timestamp */}
           {group?.lastUpdated && (
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--fg-dim)', paddingLeft: '16px', alignSelf: 'center' }}>
-              {timeAgo(group.lastUpdated)}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingLeft: '16px', alignSelf: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--fg-dim)' }}>
+                {timeAgo(group.lastUpdated)}
+              </span>
+              <span style={{ color: 'var(--border-hi)' }}>·</span>
+              <FetchButton />
             </div>
           )}
         </div>
