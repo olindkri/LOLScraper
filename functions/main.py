@@ -50,6 +50,7 @@ def find_new_games(page1_games: list[dict], existing_games: list[dict] | dict) -
 
 @scheduler_fn.on_schedule(
     schedule="every 20 minutes",
+    region="europe-west1",
     memory=MemoryOption.MB_512,
     timeout_sec=300,
     secrets=["DB_URL"],
@@ -128,6 +129,7 @@ def _seconds_since(iso_timestamp: str | None) -> float:
 
 @https_fn.on_call(
     timeout_sec=60,
+    region="europe-west1",
     memory=MemoryOption.MB_512,
     secrets=["DB_URL"],
 )
