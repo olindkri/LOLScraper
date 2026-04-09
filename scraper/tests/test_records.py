@@ -277,6 +277,7 @@ def test_update_records_winrate_tie_does_not_replace():
         "bestWinStreak": {"playerId": "x", "displayName": "X", "value": 99, "achievedAt": "2026-01-01T00:00:00Z"},
         "bestKda": {"playerId": "x", "displayName": "X", "value": 99.0, "achievedAt": "2026-01-01T00:00:00Z"},
         "bestWinRate": {"playerId": "x", "displayName": "X", "value": existing_rate, "achievedAt": "2026-01-01T00:00:00Z"},
+        "lowestWinRate": {"playerId": "x", "displayName": "X", "value": 0.0, "achievedAt": "2026-01-01T00:00:00Z"},
         "highestRank": {"playerId": "x", "displayName": "X", "tier": "master", "division": None, "lp": 999, "value": "Master 999LP", "achievedAt": "2026-01-01T00:00:00Z"},
     }
     result = update_records([PLAYER_WITH_RANK], existing)
@@ -307,6 +308,7 @@ def test_update_records_no_solorank_skips_rank_check():
         "bestWinStreak": {"playerId": "x", "displayName": "X", "value": 99, "achievedAt": "2026-01-01T00:00:00Z"},
         "bestKda": {"playerId": "x", "displayName": "X", "value": 99.0, "achievedAt": "2026-01-01T00:00:00Z"},
         "bestWinRate": {"playerId": "x", "displayName": "X", "value": 1.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "lowestWinRate": {"playerId": "x", "displayName": "X", "value": 0.0, "achievedAt": "2026-01-01T00:00:00Z"},
         "highestRank": {"playerId": "x", "displayName": "X", "tier": "master", "division": None, "lp": 999, "value": "Master 999LP", "achievedAt": "2026-01-01T00:00:00Z"},
     }
     result = update_records([player_no_rank], existing)
@@ -331,3 +333,62 @@ def test_update_records_fewer_than_30_games_skips_winrate():
     # highestRank is beaten (master > gold) but winrate is not (< 30 games)
     assert result["highestRank"]["playerId"] == "rookie"
     assert result["bestWinRate"]["value"] == 1.0  # unchanged
+
+
+# ── update_records — lowestWinRate ───────────────────────────────────────────
+
+PLAYER_WITH_LOWEST_WINRATE = {
+    "id": "eirik",
+    "displayName": "Eirik",
+    "games": [{"result": "win"}] * 6 + [{"result": "loss"}] * 24,
+    "stats": {"avgKda": 3.2},
+}
+
+
+def test_update_records_sets_lowest_winrate_on_first_run():
+    result = update_records([PLAYER_WITH_LOWEST_WINRATE], {})
+    assert result["lowestWinRate"]["playerId"] == "eirik"
+    assert result["lowestWinRate"]["value"] == pytest.approx(6 / 30)
+
+
+def test_update_records_lowest_winrate_beats_existing():
+    existing = {
+        "bestWinStreak": {"playerId": "x", "displayName": "X", "value": 99, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestKda": {"playerId": "x", "displayName": "X", "value": 99.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestWinRate": {"playerId": "x", "displayName": "X", "value": 1.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "lowestWinRate": {"playerId": "x", "displayName": "X", "value": 0.5, "achievedAt": "2026-01-01T00:00:00Z"},
+        "highestRank": {"playerId": "x", "displayName": "X", "tier": "master", "division": None, "lp": 500, "value": "Master 500LP", "achievedAt": "2026-01-01T00:00:00Z"},
+    }
+    result = update_records([PLAYER_WITH_LOWEST_WINRATE], existing)
+    assert result["lowestWinRate"]["playerId"] == "eirik"
+    assert result["lowestWinRate"]["value"] == pytest.approx(6 / 30)
+
+
+def test_update_records_lowest_winrate_tie_does_not_replace():
+    existing = {
+        "bestWinStreak": {"playerId": "x", "displayName": "X", "value": 99, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestKda": {"playerId": "x", "displayName": "X", "value": 99.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestWinRate": {"playerId": "x", "displayName": "X", "value": 1.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "lowestWinRate": {"playerId": "x", "displayName": "X", "value": 6 / 30, "achievedAt": "2026-01-01T00:00:00Z"},
+        "highestRank": {"playerId": "x", "displayName": "X", "tier": "master", "division": None, "lp": 500, "value": "Master 500LP", "achievedAt": "2026-01-01T00:00:00Z"},
+    }
+    result = update_records([PLAYER_WITH_LOWEST_WINRATE], existing)
+    assert result is None
+
+
+def test_update_records_fewer_than_30_games_skips_lowest_winrate():
+    player_few_games = {
+        "id": "rookie",
+        "displayName": "Rookie",
+        "games": [{"result": "loss"}] * 10,
+        "stats": {"avgKda": 1.0},
+    }
+    existing = {
+        "bestWinStreak": {"playerId": "x", "displayName": "X", "value": 99, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestKda": {"playerId": "x", "displayName": "X", "value": 99.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestWinRate": {"playerId": "x", "displayName": "X", "value": 1.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "lowestWinRate": {"playerId": "x", "displayName": "X", "value": 0.1, "achievedAt": "2026-01-01T00:00:00Z"},
+        "highestRank": {"playerId": "x", "displayName": "X", "tier": "master", "division": None, "lp": 500, "value": "Master 500LP", "achievedAt": "2026-01-01T00:00:00Z"},
+    }
+    result = update_records([player_few_games], existing)
+    assert result is None

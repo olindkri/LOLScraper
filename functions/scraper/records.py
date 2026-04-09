@@ -61,6 +61,7 @@ def update_records(all_player_data: list[dict], existing: dict) -> dict | None:
     best_streak_value = existing.get("bestWinStreak", {}).get("value", -1)
     best_kda_value = existing.get("bestKda", {}).get("value", -1)
     best_winrate_value = existing.get("bestWinRate", {}).get("value", -1.0)
+    lowest_winrate_value = existing.get("lowestWinRate", {}).get("value", 2.0)
 
     existing_rank = existing.get("highestRank", {})
     best_rank_score = (
@@ -72,11 +73,13 @@ def update_records(all_player_data: list[dict], existing: dict) -> dict | None:
     new_streak = dict(existing.get("bestWinStreak", {}))
     new_kda = dict(existing.get("bestKda", {}))
     new_winrate = dict(existing.get("bestWinRate", {}))
+    new_lowest_winrate = dict(existing.get("lowestWinRate", {}))
     new_rank = dict(existing.get("highestRank", {}))
 
     streak_beaten = False
     kda_beaten = False
     winrate_beaten = False
+    lowest_winrate_beaten = False
     rank_beaten = False
 
     for p in all_player_data:
@@ -86,6 +89,7 @@ def update_records(all_player_data: list[dict], existing: dict) -> dict | None:
         streak = compute_win_streak(p["games"])
         kda = p["stats"]["avgKda"]
         winrate = compute_best_winrate(p["games"])
+        lowest_winrate = compute_lowest_winrate(p["games"])
         solo_rank = p.get("soloRank")
 
         if streak > best_streak_value:
@@ -118,6 +122,16 @@ def update_records(all_player_data: list[dict], existing: dict) -> dict | None:
             }
             winrate_beaten = True
 
+        if lowest_winrate is not None and lowest_winrate < lowest_winrate_value:
+            lowest_winrate_value = lowest_winrate
+            new_lowest_winrate = {
+                "playerId": p["id"],
+                "displayName": p["displayName"],
+                "value": lowest_winrate,
+                "achievedAt": _now(),
+            }
+            lowest_winrate_beaten = True
+
         if solo_rank:
             score = rank_score(solo_rank["tier"], solo_rank.get("division"), solo_rank["lp"])
             if score > best_rank_score:
@@ -133,13 +147,14 @@ def update_records(all_player_data: list[dict], existing: dict) -> dict | None:
                 }
                 rank_beaten = True
 
-    if not any([streak_beaten, kda_beaten, winrate_beaten, rank_beaten]):
+    if not any([streak_beaten, kda_beaten, winrate_beaten, lowest_winrate_beaten, rank_beaten]):
         return None
 
     return {
         "bestWinStreak": new_streak,
         "bestKda": new_kda,
         "bestWinRate": new_winrate,
+        "lowestWinRate": new_lowest_winrate,
         "highestRank": new_rank,
     }
 
