@@ -10,4 +10,7 @@ PLAYERS = [
     {"id": "sigurd",   "displayName": "Sigurd",   "gamertag": "Pog0p#EUW",               "url": "https://www.leagueofgraphs.com/summoner/euw/Pog0p-EUW"},
     {"id": "simon",    "displayName": "Simon",    "gamertag": "sXBLACKPHANTOMXs#2003",   "url": "https://www.leagueofgraphs.com/summoner/euw/sXBLACKPHANTOMXs-2003"},
     {"id": "fredrik",  "displayName": "Fredrik",  "gamertag": "XxVortexSpeedxX#3845",    "url": "https://www.leagueofgraphs.com/summoner/euw/XxVortexSpeedxX-3845"},
+    {"id": "adrian",   "displayName": "Adrian",   "gamertag": "Requiem#9749",            "url": "https://www.leagueofgraphs.com/summoner/euw/Requiem-9749"},
+    {"id": "sigurdn",  "displayName": "Sigurd N", "gamertag": "Mr Naess#EUW",            "url": "https://www.leagueofgraphs.com/summoner/euw/Mr+Naess-EUW"},
+    {"id": "elias",    "displayName": "Elias",    "gamertag": "Hotdogmaster64#EUW",      "url": "https://www.leagueofgraphs.com/summoner/euw/Hotdogmaster64-EUW"},
 ]
