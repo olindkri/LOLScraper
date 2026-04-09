@@ -114,3 +114,91 @@ def scheduled_fetch(event: scheduler_fn.ScheduledEvent) -> None:
         except Exception as e:
             log.warning(f"  → Failed to fetch match {match_id}: {e}")
         time.sleep(0.5)
+
+
+def _seconds_since(iso_timestamp: str | None) -> float:
+    """Return seconds elapsed since the given ISO timestamp, or a large value if None."""
+    if iso_timestamp is None:
+        return float("inf")
+    then = datetime.fromisoformat(iso_timestamp)
+    return (datetime.now(timezone.utc) - then).total_seconds()
+
+
+@https_fn.on_call(
+    timeout_sec=60,
+    memory=MemoryOption.MB_512,
+    secrets=["FIREBASE_DATABASE_URL"],
+)
+def quick_fetch(req: https_fn.CallableRequest) -> dict:
+    """Incremental fetch: page 1 per player in parallel, writes only new games."""
+    db_url = os.environ.get("FIREBASE_DATABASE_URL", "")
+    _init_app(db_url)
+
+    # Enforce cooldown
+    last_fetch_ts = read_manual_fetch_time(db_url)
+    elapsed = _seconds_since(last_fetch_ts)
+    remaining = int(COOLDOWN_SECONDS - elapsed)
+    if remaining > 0:
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.RESOURCE_EXHAUSTED,
+            message="cooldown",
+            details={"cooldownSeconds": remaining},
+        )
+
+    # Fetch page 1 per player in parallel
+    def fetch_player(player):
+        try:
+            games, rank, mastery = fetch_games_for_player(player["url"], target=10)
+            return {"player": player, "games": games, "rank": rank, "mastery": mastery}
+        except Exception as e:
+            log.warning(f"quickFetch: failed to scrape {player['displayName']}: {e}")
+            return {"player": player, "games": [], "rank": None, "mastery": {}}
+
+    with ThreadPoolExecutor(max_workers=len(PLAYERS)) as executor:
+        results = list(executor.map(fetch_player, PLAYERS))
+
+    total_new = 0
+    updated_player_data = []  # for records check
+    all_stats = {}
+
+    for result in results:
+        player = result["player"]
+        pid = player["id"]
+
+        existing_games = read_player_games(pid, db_url)
+        new_games = find_new_games(result["games"], existing_games)
+
+        if new_games:
+            merged = new_games + (list(existing_games.values()) if isinstance(existing_games, dict) else existing_games)
+            stats = compute_player_stats(merged)
+            mastery_pts = result["mastery"].get(stats["mostPlayedChampion"])
+            if mastery_pts is not None:
+                stats["mostPlayedChampionMastery"] = mastery_pts
+
+            patch_player(pid, {
+                "games": merged,
+                "stats": stats,
+                "soloRank": result["rank"],
+            }, db_url)
+
+            all_stats[pid] = stats
+            total_new += len(new_games)
+            updated_player_data.append({**player, "games": merged, "stats": stats})
+            log.info(f"quickFetch: {player['displayName']} +{len(new_games)} new games")
+        else:
+            existing_stats = read_player_stats(pid, db_url)
+            if existing_stats:
+                all_stats[pid] = existing_stats
+
+    group = compute_group_stats(list(all_stats.values()))
+    write_group(group, db_url)
+
+    if updated_player_data:
+        existing_records = read_records(db_url)
+        new_records = update_records(updated_player_data, existing_records)
+        if new_records is not None:
+            write_records(new_records, db_url)
+
+    write_manual_fetch_time(db_url)
+    log.info(f"quickFetch complete: {total_new} new games total.")
+    return {"newGames": total_new}

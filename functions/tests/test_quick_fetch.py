@@ -51,3 +51,22 @@ def test_existing_games_as_dict_converted_to_list():
     result = find_new_games(page1, existing_dict)
     assert len(result) == 1
     assert result[0]["matchId"] == "6"
+
+
+from datetime import datetime, timezone, timedelta
+from main import _seconds_since, COOLDOWN_SECONDS
+
+
+def test_seconds_since_recent_timestamp():
+    ts = (datetime.now(timezone.utc) - timedelta(seconds=120)).isoformat()
+    result = _seconds_since(ts)
+    assert 119 <= result <= 121
+
+
+def test_seconds_since_old_timestamp():
+    ts = (datetime.now(timezone.utc) - timedelta(seconds=400)).isoformat()
+    assert _seconds_since(ts) >= 400
+
+
+def test_seconds_since_none_returns_large_number():
+    assert _seconds_since(None) >= COOLDOWN_SECONDS
