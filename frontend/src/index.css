@@ -46,6 +46,14 @@ body {
   to   { transform: scale(1);    opacity: 1; }
 }
 
+@keyframes fetch-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+.fetch-loading {
+  animation: fetch-pulse 1.5s ease-in-out infinite;
+}
+
 /* Default: hide mobile-only rank label */
 .rank-label-mobile { display: none; }
 
