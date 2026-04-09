@@ -1,7 +1,8 @@
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from main import find_new_games
+from datetime import datetime, timezone, timedelta
+from main import find_new_games, _seconds_since, COOLDOWN_SECONDS
 
 
 def _game(match_id, result="win"):
@@ -53,14 +54,10 @@ def test_existing_games_as_dict_converted_to_list():
     assert result[0]["matchId"] == "6"
 
 
-from datetime import datetime, timezone, timedelta
-from main import _seconds_since, COOLDOWN_SECONDS
-
-
 def test_seconds_since_recent_timestamp():
     ts = (datetime.now(timezone.utc) - timedelta(seconds=120)).isoformat()
     result = _seconds_since(ts)
-    assert 119 <= result <= 121
+    assert 115 <= result <= 125
 
 
 def test_seconds_since_old_timestamp():

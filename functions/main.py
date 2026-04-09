@@ -121,6 +121,8 @@ def _seconds_since(iso_timestamp: str | None) -> float:
     if iso_timestamp is None:
         return float("inf")
     then = datetime.fromisoformat(iso_timestamp)
+    if then.tzinfo is None:
+        then = then.replace(tzinfo=timezone.utc)
     return (datetime.now(timezone.utc) - then).total_seconds()
 
 
@@ -137,12 +139,12 @@ def quick_fetch(req: https_fn.CallableRequest) -> dict:
     # Enforce cooldown
     last_fetch_ts = read_manual_fetch_time(db_url)
     elapsed = _seconds_since(last_fetch_ts)
-    remaining = int(COOLDOWN_SECONDS - elapsed)
+    remaining = COOLDOWN_SECONDS - elapsed  # keep as float; -inf > 0 is False, safe
     if remaining > 0:
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.RESOURCE_EXHAUSTED,
             message="cooldown",
-            details={"cooldownSeconds": remaining},
+            details={"cooldownSeconds": int(remaining)},  # only cast to int here, where we know it's finite
         )
 
     # Fetch page 1 per player in parallel
@@ -166,10 +168,12 @@ def quick_fetch(req: https_fn.CallableRequest) -> dict:
         pid = player["id"]
 
         existing_games = read_player_games(pid, db_url)
+        if isinstance(existing_games, dict):
+            existing_games = list(existing_games.values())
         new_games = find_new_games(result["games"], existing_games)
 
         if new_games:
-            merged = new_games + (list(existing_games.values()) if isinstance(existing_games, dict) else existing_games)
+            merged = new_games + existing_games  # already a list
             stats = compute_player_stats(merged)
             mastery_pts = result["mastery"].get(stats["mostPlayedChampion"])
             if mastery_pts is not None:
