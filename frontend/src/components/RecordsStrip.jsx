@@ -18,6 +18,12 @@ const RECORDS = [
     format: (r) => `${Math.round(r.value * 100)}%`,
   },
   {
+    key: 'lowestWinRate',
+    label: 'LOWEST W/R',
+    color: 'var(--loss)',
+    format: (r) => `${Math.round(r.value * 100)}%`,
+  },
+  {
     key: 'highestRank',
     label: 'PEAK RANK',
     color: '#60a5fa',
