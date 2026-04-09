@@ -1,6 +1,6 @@
 import re
 from bs4 import BeautifulSoup
-from scrape import fetch_page, BASE_URL, _parse_span_int
+from .scrape import fetch_page, BASE_URL, _parse_span_int
 
 
 def scrape_match(match_id: str) -> dict:
