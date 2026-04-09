@@ -177,3 +177,119 @@ def test_rank_score_master_no_division():
 
 def test_rank_score_master_beats_diamond():
     assert rank_score("master", None, 0) > rank_score("diamond", "I", 100)
+
+
+# ── update_records — bestWinRate and highestRank ─────────────────────────────
+
+# 30 games: 25 wins, 5 losses → best window = 25/30
+_GAMES_30 = [{"result": "win"}] * 25 + [{"result": "loss"}] * 5
+
+PLAYER_WITH_RANK = {
+    "id": "oliver",
+    "displayName": "Oliver",
+    "games": _GAMES_30,
+    "stats": {"avgKda": 5.5},
+    "soloRank": {"tier": "diamond", "division": "I", "lp": 92},
+}
+
+PLAYER_WITH_LOWER_RANK = {
+    "id": "eirik",
+    "displayName": "Eirik",
+    "games": _GAMES_30,
+    "stats": {"avgKda": 3.2},
+    "soloRank": {"tier": "platinum", "division": "II", "lp": 75},
+}
+
+
+def test_update_records_sets_best_winrate_on_first_run():
+    result = update_records([PLAYER_WITH_RANK], {})
+    assert result["bestWinRate"]["value"] == pytest.approx(25 / 30)
+    assert result["bestWinRate"]["playerId"] == "oliver"
+
+
+def test_update_records_sets_highest_rank_on_first_run():
+    result = update_records([PLAYER_WITH_RANK], {})
+    assert result["highestRank"]["tier"] == "diamond"
+    assert result["highestRank"]["division"] == "I"
+    assert result["highestRank"]["lp"] == 92
+    assert result["highestRank"]["value"] == "Diamond I 92LP"
+    assert result["highestRank"]["playerId"] == "oliver"
+
+
+def test_update_records_picks_highest_rank_across_players():
+    result = update_records([PLAYER_WITH_LOWER_RANK, PLAYER_WITH_RANK], {})
+    assert result["highestRank"]["playerId"] == "oliver"
+
+
+def test_update_records_winrate_beats_existing():
+    existing = {
+        "bestWinStreak": {"playerId": "x", "displayName": "X", "value": 99, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestKda": {"playerId": "x", "displayName": "X", "value": 99.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestWinRate": {"playerId": "x", "displayName": "X", "value": 0.5, "achievedAt": "2026-01-01T00:00:00Z"},
+        "highestRank": {"playerId": "x", "displayName": "X", "tier": "gold", "division": "I", "lp": 99, "value": "Gold I 99LP", "achievedAt": "2026-01-01T00:00:00Z"},
+    }
+    result = update_records([PLAYER_WITH_RANK], existing)
+    assert result["bestWinRate"]["value"] == pytest.approx(25 / 30)
+    assert result["bestWinRate"]["playerId"] == "oliver"
+
+
+def test_update_records_winrate_tie_does_not_replace():
+    existing_rate = 25 / 30
+    existing = {
+        "bestWinStreak": {"playerId": "x", "displayName": "X", "value": 99, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestKda": {"playerId": "x", "displayName": "X", "value": 99.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestWinRate": {"playerId": "x", "displayName": "X", "value": existing_rate, "achievedAt": "2026-01-01T00:00:00Z"},
+        "highestRank": {"playerId": "x", "displayName": "X", "tier": "master", "division": None, "lp": 999, "value": "Master 999LP", "achievedAt": "2026-01-01T00:00:00Z"},
+    }
+    result = update_records([PLAYER_WITH_RANK], existing)
+    assert result is None
+
+
+def test_update_records_rank_beats_existing():
+    existing = {
+        "bestWinStreak": {"playerId": "x", "displayName": "X", "value": 99, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestKda": {"playerId": "x", "displayName": "X", "value": 99.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestWinRate": {"playerId": "x", "displayName": "X", "value": 1.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "highestRank": {"playerId": "x", "displayName": "X", "tier": "platinum", "division": "I", "lp": 99, "value": "Platinum I 99LP", "achievedAt": "2026-01-01T00:00:00Z"},
+    }
+    result = update_records([PLAYER_WITH_RANK], existing)
+    assert result["highestRank"]["playerId"] == "oliver"
+    assert result["highestRank"]["value"] == "Diamond I 92LP"
+
+
+def test_update_records_no_solorank_skips_rank_check():
+    player_no_rank = {
+        "id": "ghost",
+        "displayName": "Ghost",
+        "games": _GAMES_30,
+        "stats": {"avgKda": 5.5},
+        # no soloRank key
+    }
+    existing = {
+        "bestWinStreak": {"playerId": "x", "displayName": "X", "value": 99, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestKda": {"playerId": "x", "displayName": "X", "value": 99.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestWinRate": {"playerId": "x", "displayName": "X", "value": 1.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "highestRank": {"playerId": "x", "displayName": "X", "tier": "master", "division": None, "lp": 999, "value": "Master 999LP", "achievedAt": "2026-01-01T00:00:00Z"},
+    }
+    result = update_records([player_no_rank], existing)
+    assert result is None
+
+
+def test_update_records_fewer_than_30_games_skips_winrate():
+    player_few_games = {
+        "id": "rookie",
+        "displayName": "Rookie",
+        "games": [{"result": "win"}] * 10,
+        "stats": {"avgKda": 5.5},
+        "soloRank": {"tier": "master", "division": None, "lp": 9999},
+    }
+    existing = {
+        "bestWinStreak": {"playerId": "x", "displayName": "X", "value": 99, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestKda": {"playerId": "x", "displayName": "X", "value": 99.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "bestWinRate": {"playerId": "x", "displayName": "X", "value": 1.0, "achievedAt": "2026-01-01T00:00:00Z"},
+        "highestRank": {"playerId": "x", "displayName": "X", "tier": "gold", "division": "I", "lp": 0, "value": "Gold I 0LP", "achievedAt": "2026-01-01T00:00:00Z"},
+    }
+    result = update_records([player_few_games], existing)
+    # highestRank is beaten (master > gold) but winrate is not (< 30 games)
+    assert result["highestRank"]["playerId"] == "rookie"
+    assert result["bestWinRate"]["value"] == 1.0  # unchanged
