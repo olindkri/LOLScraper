@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 const CIRCUMFERENCE = 87.96; // 2π × 14
 const ARC = 65.97;           // (270 / 360) × CIRCUMFERENCE
 
+// rank is expected to be 1–10 (one per participant in a 10-player match)
 function rankLabel(rank) {
   if (rank === 1) return 'MVP';
   if (rank === 2) return '2nd';
@@ -16,6 +17,7 @@ function useReducedMotion() {
           window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
     const handler = e => setReduce(e.matches);
     mq.addEventListener('change', handler);
