@@ -23,5 +23,8 @@ frontend/dist/
 .idea/
 .vscode/
 
+# Firebase CLI cache
+.firebase/
+
 # Local git worktrees
 .worktrees/
