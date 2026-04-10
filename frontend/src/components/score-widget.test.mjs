@@ -26,7 +26,7 @@ test('ScoreWidget ranks 1 as MVP', async () => {
 
 test('ScoreWidget multiplies score by 10 for display', async () => {
   const src = await readFile(path, 'utf8');
-  assert.match(src, /score.*\*.*10|10.*\*.*score/);
+  assert.match(src, /normalized\s*\*\s*10|10\s*\*\s*normalized/);
 });
 
 test('ScoreWidget respects prefers-reduced-motion', async () => {

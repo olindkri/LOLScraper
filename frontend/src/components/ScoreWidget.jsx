@@ -26,15 +26,21 @@ function useReducedMotion() {
   return reduce;
 }
 
+/**
+ * @param {number} score - Raw performance score from the database, expected range 0–10.
+ *                         Displayed as score × 10 (0–100). Values outside 0–10 are clamped.
+ * @param {number} rank  - 1-based rank among all participants (1–10).
+ */
 export default function ScoreWidget({ score, rank }) {
   const reducedMotion = useReducedMotion();
-  const display = Math.round((score ?? 0) * 10);
+  const normalized = Math.min(10, Math.max(0, score ?? 0));
+  const display = Math.round(normalized * 10);
   const arcColor = display >= 70
     ? 'var(--win)'
     : display >= 40
     ? 'var(--gold)'
     : 'var(--loss)';
-  const offset = ARC * (1 - (score ?? 0) / 10);
+  const offset = ARC * (1 - normalized / 10);
   const label = rankLabel(rank ?? 10);
 
   return (
