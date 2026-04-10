@@ -3,6 +3,7 @@ import { ref, get } from 'firebase/database';
 import { db } from '../firebase';
 import { TRACKED_GAMERTAGS } from '../trackedPlayers';
 import ChampionBadge from './ChampionBadge';
+import ScoreWidget from './ScoreWidget';
 
 export default function MatchModal({ matchId, onClose }) {
   const [match, setMatch] = useState(null);
@@ -36,6 +37,12 @@ export default function MatchModal({ matchId, onClose }) {
   const team1 = (match?.participants ?? []).filter(p => p.team === 1);
   const team2 = (match?.participants ?? []).filter(p => p.team === 2);
   const totalKills = match ? match.team1Kills + match.team2Kills : 0;
+  const rankMap = {};
+  if (match?.participants) {
+    [...match.participants]
+      .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+      .forEach((p, i) => { rankMap[p.summonerName] = i + 1; });
+  }
 
   return (
     <div
@@ -120,6 +127,7 @@ export default function MatchModal({ matchId, onClose }) {
                 teamKills={match.team1Kills}
                 totalKills={totalKills}
                 won={match.team1Won != null ? match.team1Won === true : null}
+                rankMap={rankMap}
               />
               <TeamColumn
                 title="Team 2"
@@ -127,6 +135,7 @@ export default function MatchModal({ matchId, onClose }) {
                 teamKills={match.team2Kills}
                 totalKills={totalKills}
                 won={match.team1Won != null ? match.team1Won === false : null}
+                rankMap={rankMap}
               />
             </div>
           )}
@@ -137,7 +146,7 @@ export default function MatchModal({ matchId, onClose }) {
   );
 }
 
-function TeamColumn({ title, players, teamKills, totalKills, won }) {
+function TeamColumn({ title, players, teamKills, totalKills, won, rankMap }) {
   const hasResult = won !== null;
   const color = won === true ? 'var(--win)' : won === false ? 'var(--loss)' : 'var(--fg-dim)';
   const glow = won === true ? 'var(--win-soft)' : won === false ? 'var(--loss-soft)' : 'transparent';
@@ -190,16 +199,20 @@ function TeamColumn({ title, players, teamKills, totalKills, won }) {
 
       {/* Player cards */}
       {players.map((p) => (
-        <ParticipantRow key={`${p.team}-${p.summonerName}`} participant={p} teamKills={teamKills} teamColor={color} />
+        <ParticipantRow
+          key={`${p.team}-${p.summonerName}`}
+          participant={p}
+          teamKills={teamKills}
+          teamColor={color}
+          rank={rankMap?.[p.summonerName] ?? 10}
+        />
       ))}
     </div>
   );
 }
 
-function ParticipantRow({ participant, teamKills, teamColor }) {
+function ParticipantRow({ participant, teamKills, teamColor, rank }) {
   const isTracked = TRACKED_GAMERTAGS.has(participant.summonerName);
-  const score = participant.score ?? 0;
-  const scoreBg = score >= 7 ? 'var(--win)' : score >= 4 ? 'var(--gold)' : 'var(--loss)';
   const kp = teamKills > 0
     ? Math.min(100, Math.round(((participant.kills + participant.assists) / teamKills) * 100))
     : 0;
@@ -231,13 +244,7 @@ function ParticipantRow({ participant, teamKills, teamColor }) {
         }}>
           {participant.summonerName}
         </span>
-        <span style={{
-          background: scoreBg, color: '#fff',
-          fontFamily: 'var(--font-head)', fontSize: '0.65rem',
-          padding: '2px 7px', borderRadius: '3px', flexShrink: 0,
-        }}>
-          {score}
-        </span>
+        <ScoreWidget score={participant.score ?? 0} rank={rank} />
       </div>
 
       {/* Row 2: KDA · CS · Vision */}
