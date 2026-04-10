@@ -99,6 +99,8 @@ fill: none
 transition: stroke-dashoffset 400ms ease
 ```
 
+Disable the transition when `prefers-reduced-motion: reduce` is active (CSS `@media` or `useReducedMotion` hook).
+
 ### Center button circle
 
 ```
@@ -113,6 +115,18 @@ fill: var(--surface)
 | score × 10 ≥ 70  | Green          | `var(--win)`  |
 | score × 10 ≥ 40  | Gold/orange    | `var(--gold)` |
 | score × 10 < 40  | Red            | `var(--loss)` |
+
+---
+
+## Accessibility
+
+The SVG must include `role="img"` and an `aria-label` with the full text description, e.g.:
+
+```
+aria-label="Score: 70 out of 100 — MVP"
+```
+
+The visible number and rank text already handle visual communication; the label ensures screen readers get equivalent information.
 
 ---
 
