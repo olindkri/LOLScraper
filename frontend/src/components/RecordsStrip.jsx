@@ -1,3 +1,9 @@
+const RANK_TIER_COLORS = {
+  iron: '#6C5849', bronze: '#A96433', silver: '#7B9AA1', gold: '#C8981E',
+  platinum: '#4C9E91', emerald: '#2EAA4B', diamond: '#576BCE',
+  master: '#9B3FE8', grandmaster: '#D44242', challenger: '#F5C94B',
+};
+
 const RECORDS = [
   {
     key: 'bestWinStreak',
@@ -26,7 +32,7 @@ const RECORDS = [
   {
     key: 'highestRank',
     label: 'PEAK RANK',
-    color: '#60a5fa',
+    color: (r) => RANK_TIER_COLORS[r?.tier] ?? 'var(--fg-dim)',
     format: (r) => r.value,
   },
 ];
@@ -78,7 +84,7 @@ export default function RecordsStrip({ records }) {
                 fontFamily: 'var(--font-data)',
                 fontSize: '20px',
                 fontWeight: 700,
-                color: record ? config.color : 'var(--fg-dim)',
+                color: record ? (typeof config.color === 'function' ? config.color(record) : config.color) : 'var(--fg-dim)',
                 lineHeight: 1.1,
               }}
             >

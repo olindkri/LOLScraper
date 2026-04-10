@@ -172,6 +172,35 @@ def quick_fetch(req: https_fn.CallableRequest) -> dict:
         existing_games = read_player_games(pid, db_url)
         if isinstance(existing_games, dict):
             existing_games = list(existing_games.values())
+
+        if not existing_games:
+            # New player — quick_fetch only fetched 10 games; do a full 30-game scrape now
+            try:
+                full_games, full_rank, full_mastery = fetch_games_for_player(player["url"], target=30)
+            except Exception as e:
+                log.warning(f"quickFetch: full scrape failed for {player['displayName']}: {e}")
+                full_games, full_rank, full_mastery = result["games"], result["rank"], result["mastery"]
+
+            stats = compute_player_stats(full_games)
+            mastery_pts = full_mastery.get(stats["mostPlayedChampion"])
+            if mastery_pts is not None:
+                stats["mostPlayedChampionMastery"] = mastery_pts
+
+            patch_player(pid, {
+                "displayName": player["displayName"],
+                "gamertag": player["gamertag"],
+                "profileUrl": player["url"],
+                "games": full_games,
+                "stats": stats,
+                "soloRank": full_rank,
+            }, db_url)
+
+            all_stats[pid] = stats
+            total_new += len(full_games)
+            updated_player_data.append({**player, "games": full_games, "stats": stats, "soloRank": full_rank})
+            log.info(f"quickFetch: {player['displayName']} new player, {len(full_games)} games fetched")
+            continue
+
         new_games = find_new_games(result["games"], existing_games)
 
         if new_games:
@@ -182,6 +211,9 @@ def quick_fetch(req: https_fn.CallableRequest) -> dict:
                 stats["mostPlayedChampionMastery"] = mastery_pts
 
             patch_player(pid, {
+                "displayName": player["displayName"],
+                "gamertag": player["gamertag"],
+                "profileUrl": player["url"],
                 "games": merged,
                 "stats": stats,
                 "soloRank": result["rank"],
@@ -189,7 +221,7 @@ def quick_fetch(req: https_fn.CallableRequest) -> dict:
 
             all_stats[pid] = stats
             total_new += len(new_games)
-            updated_player_data.append({**player, "games": merged, "stats": stats})
+            updated_player_data.append({**player, "games": merged, "stats": stats, "soloRank": result["rank"]})
             log.info(f"quickFetch: {player['displayName']} +{len(new_games)} new games")
         else:
             existing_stats = read_player_stats(pid, db_url)

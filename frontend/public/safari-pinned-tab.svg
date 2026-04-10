@@ -1,3 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <path fill="#000" d="M4.2 2 1 4.8l1.4.4c.4.1.8 0 1.1-.2L5 4.1l1.1.9h3.8l1.1-.9 1.5.9c.3.2.7.3 1.1.2l1.4-.4L11.8 2l-1.5.9c-.3.2-.8.3-1.2.3H6.9c-.4 0-.8-.1-1.2-.3L4.2 2Zm.9 4.1c-1.6 0-2.8 1.3-2.8 3.2 0 3.1 2.2 4.7 5 4.7h1.4c2.8 0 5-1.6 5-4.7 0-1.9-1.2-3.2-2.8-3.2H5.1Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!--
+    Safari pinned tab: monochrome silhouette, Safari overrides fill color.
+    Using fill-rule="evenodd" so overlapping regions become holes (eyes, nostrils).
+  -->
+  <g fill="#000000" fill-rule="evenodd">
+    <!-- Left ear -->
+    <ellipse cx="18" cy="38" rx="10" ry="13"/>
+    <!-- Right ear -->
+    <ellipse cx="82" cy="38" rx="10" ry="13"/>
+    <!-- Head -->
+    <circle cx="50" cy="54" r="34"/>
+    <!-- Eyes punch out (overlap = transparent via evenodd) -->
+    <circle cx="39" cy="47" r="5.5"/>
+    <circle cx="61" cy="47" r="5.5"/>
+    <!-- Snout region -->
+    <ellipse cx="50" cy="65" rx="20" ry="13"/>
+    <!-- Snout inner (overlap = transparent, creates nostril band) -->
+    <ellipse cx="50" cy="65" rx="13" ry="7"/>
+    <!-- Nostril punches back in (3rd overlap = filled again) -->
+    <circle cx="43" cy="66" r="4"/>
+    <circle cx="57" cy="66" r="4"/>
+  </g>
 </svg>
